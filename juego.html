@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Juego de Coche - RACC Mobility</title>
+
     <style>
       body {
         margin: 0;
@@ -25,7 +26,10 @@
         border: 4px solid #333;
       }
 
-      canvas { display: block; background: #add8e6; }
+      canvas {
+        display: block;
+        background: #add8e6;
+      }
 
       #interior-coche {
         position: absolute;
@@ -33,23 +37,25 @@
         left: 0;
         width: 100%;
         height: 260px;
-        object-fit: cover;  
+        object-fit: cover;
         pointer-events: none;
         z-index: 10;
       }
 
-      /* --- CAPA DE SUEÑO --- */
+      /* CAPA SUEÑO */
+
       #filtro-sueño {
         position: absolute;
         inset: 0;
         background-color: black;
         opacity: 0;
         pointer-events: none;
-        z-index: 2500; 
-        transition: opacity 0.1s; /* Transición más rápida para parpadeos */
+        z-index: 2500;
+        transition: opacity 0.1s;
       }
 
-      /* --- NOTIFICACIÓN --- */
+      /* NOTIFICACIÓN */
+
       #notificacion-movil {
         position: absolute;
         right: -350px;
@@ -63,9 +69,29 @@
         transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         border: 3px solid #25d366;
       }
-      #notificacion-movil.mostrar { right: 20px !important; }
-      .notificacion-header { display: flex; justify-content: space-between; align-items: center; color: #25d366; font-weight: bold; font-size: 14px; margin-bottom: 8px; }
-      #cerrar-notificacion { background: #eee; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; }
+
+      #notificacion-movil.mostrar {
+        right: 20px !important;
+      }
+
+      .notificacion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #25d366;
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+
+      #cerrar-notificacion {
+        background: #eee;
+        border: none;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        cursor: pointer;
+      }
 
       #velocimetroFijo {
         position: absolute;
@@ -81,6 +107,44 @@
         z-index: 130;
       }
 
+      /* AVISO CONTROLES */
+
+      #avisoC {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        background: rgba(0,0,0,0.75);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        z-index: 210;
+        transition: opacity 0.3s;
+      }
+
+      .tecla{
+        background:#f1c40f;
+        color:black;
+        padding:2px 6px;
+        border-radius:4px;
+        font-weight:bold;
+      }
+
+      /* PANEL CONTROLES */
+
+      #controlesUI {
+        position: absolute;
+        top: 40px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 5px solid #f1c40f;
+        z-index: 200;
+        display: none;
+      }
+
       #startScreen {
         position: absolute;
         inset: 0;
@@ -89,7 +153,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        z-index: 4000; 
+        z-index: 4000;
       }
 
       #btnIniciarVerde {
@@ -101,11 +165,35 @@
         border-radius: 8px;
         cursor: pointer;
       }
-      #botonReiniciarImg { width: 220px; display: none; margin-bottom: 20px; cursor: pointer;}
+
+      #botonReiniciarImg {
+        width: 220px;
+        display: none;
+        margin-bottom: 20px;
+        cursor: pointer;
+      }
     </style>
   </head>
+
   <body>
     <div id="game-container">
+
+      <div id="avisoC">
+        Pulsa <span class="tecla">C</span> para ver controles
+      </div>
+
+      <div id="controlesUI">
+        <div style="font-size:14px;margin-bottom:5px">
+          <strong>CONTROLES</strong>
+        </div>
+        <div style="font-size:13px;line-height:1.5">
+          <span class="tecla">➡️</span> ACELERAR /
+          <span class="tecla">⬅️</span> FRENAR<br>
+          <span class="tecla">⬆️⬇️</span> CAMBIAR CARRIL<br>
+          <span class="tecla">C</span> CERRAR
+        </div>
+      </div>
+
       <div id="filtro-sueño"></div>
 
       <div id="notificacion-movil">
@@ -113,207 +201,361 @@
           <span>💬 WhatsApp</span>
           <button id="cerrar-notificacion" onclick="cerrarMensaje()">×</button>
         </div>
-        <p id="texto-mensaje" style="margin:0; color:#333; font-size:14px;">¡Tienes un mensaje!</p>
+        <p id="texto-mensaje">¡Tienes un mensaje!</p>
       </div>
 
       <div id="velocimetroFijo">0 km/h</div>
-      
+
       <div id="startScreen">
-        <h1 id="mensajeEstado" style="color: white; margin-bottom: 20px; text-align: center;">JUEGO DE COCHE</h1>
-        <img src="images/boton_reiniciar.png" id="botonReiniciarImg" alt="Reiniciar" />
+        <h1 id="mensajeEstado" style="color:white;margin-bottom:20px;text-align:center">
+          JUEGO DE COCHE
+        </h1>
+
+        <img src="images/boton_reiniciar.png" id="botonReiniciarImg">
+
         <button id="btnIniciarVerde">INICIAR</button>
       </div>
 
       <canvas id="gameCanvas"></canvas>
-      <img src="images/img_coche_dentro.png" id="interior-coche" />
+
+      <img src="images/img_coche_dentro.png" id="interior-coche">
+
     </div>
 
-    <script>
-      const canvas = document.getElementById("gameCanvas");
-      const ctx = canvas.getContext("2d");
-      const startScreen = document.getElementById("startScreen");
-      const btnIniciarVerde = document.getElementById("btnIniciarVerde");
-      const btnResetImg = document.getElementById("botonReiniciarImg");
-      const mensajeEstado = document.getElementById("mensajeEstado");
-      const velocimetro = document.getElementById("velocimetroFijo");
-      const filtroSueño = document.getElementById("filtro-sueño");
-      const notifElement = document.getElementById("notificacion-movil");
-      const textoElement = document.getElementById("texto-mensaje");
+<script>
 
-      const GAME_WIDTH = 1000;
-      const GAME_HEIGHT = 600;
-      let roadY = 150;
-      let roadHeight = 220;
-      const PLAYER_WIDTH = 160;
-      const PLAYER_HEIGHT = 90;
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-      let gameStarted = false;
-      let lanes = [];
-      let enemyCars = [];
-      let lastSpawnTime = 0;
-      let currentSpeed = 5;
-      let maxSpeed = 10;
-      let lineOffset = 0;
+const startScreen = document.getElementById("startScreen");
+const btnIniciarVerde = document.getElementById("btnIniciarVerde");
+const btnResetImg = document.getElementById("botonReiniciarImg");
+const mensajeEstado = document.getElementById("mensajeEstado");
+const velocimetro = document.getElementById("velocimetroFijo");
 
-      // --- SISTEMA DE SUEÑO MEJORADO ---
-      let tiempoLento = 0; 
-      let opacidadSueño = 0;
-      let estaEnMicroSueño = false;
-      let microSueñoInicio = 0;
+const filtroSueño = document.getElementById("filtro-sueño");
 
-      const misMensajes = ["¿Dónde estás? 📍", "¡Mira esto! 😂", "Mama: ¿Vienes?", "¡Contesta ya! 😱"];
+const notifElement = document.getElementById("notificacion-movil");
+const textoElement = document.getElementById("texto-mensaje");
 
-      function lanzarNotificacion() {
-        if (!gameStarted) return;
-        textoElement.innerText = misMensajes[Math.floor(Math.random() * misMensajes.length)];
-        notifElement.classList.add("mostrar");
-        setTimeout(lanzarNotificacion, 8000 + Math.random() * 4000);
-      }
+const divControles = document.getElementById("controlesUI");
+const avisoC = document.getElementById("avisoC");
 
-      function cerrarMensaje() { notifElement.classList.remove("mostrar"); }
+let showControls = false;
 
-      const car = { x: 80, y: 0, targetY: 0, speed: 12, image: new Image(), loaded: false };
-      car.image.src = "images/imagen_coche.png";
-      car.image.onload = () => car.loaded = true;
+const GAME_WIDTH = 1000;
+const GAME_HEIGHT = 600;
 
-      const enemyImages = [];
-      ["1","2","3"].forEach(n => {
-        const img = new Image();
-        img.src = `images/coche_de_cara${n}.png`;
-        enemyImages.push(img);
-      });
+let roadY = 150;
+let roadHeight = 220;
 
-      let keys = {};
-      window.addEventListener("keydown", e => keys[e.key] = true);
-      window.addEventListener("keyup", e => keys[e.key] = false);
+const PLAYER_WIDTH = 160;
+const PLAYER_HEIGHT = 90;
 
-      function setupWorld() {
-        canvas.width = GAME_WIDTH;
-        canvas.height = GAME_HEIGHT;
-        lanes = [roadY + roadHeight * 0.25 - PLAYER_HEIGHT/2, roadY + roadHeight * 0.75 - PLAYER_HEIGHT/2];
-        car.y = lanes[0];
-        car.targetY = lanes[0];
-      }
-      setupWorld();
+let gameStarted = false;
+let lanes = [];
+let enemyCars = [];
+let lastSpawnTime = 0;
 
-      function iniciarPartida() {
-        enemyCars = [];
-        currentSpeed = 5;
-        tiempoLento = 0;
-        opacidadSueño = 0;
-        estaEnMicroSueño = false;
-        filtroSueño.style.opacity = 0;
-        gameStarted = true;
-        startScreen.style.display = "none";
-        cerrarMensaje();
-        setTimeout(lanzarNotificacion, 4000);
-      }
+let currentSpeed = 5;
+let maxSpeed = 10;
+let lineOffset = 0;
 
-      btnIniciarVerde.onclick = iniciarPartida;
-      btnResetImg.onclick = () => {
-        btnResetImg.style.display = "none";
-        btnIniciarVerde.style.display = "block";
-        iniciarPartida();
-      };
+let tiempoLento = 0;
+let opacidadSueño = 0;
+let estaEnMicroSueño = false;
+let microSueñoInicio = 0;
 
-      function update(timestamp) {
-        if (!gameStarted) return;
+const misMensajes = [
+"¿Dónde estás? 📍",
+"¡Mira esto! 😂",
+"Mama: ¿Vienes?",
+"¡Contesta ya! 😱"
+];
 
-        // Velocidad
-        if (keys["ArrowRight"]) currentSpeed = Math.min(currentSpeed + 0.03, maxSpeed);
-        else if (keys["ArrowLeft"]) currentSpeed = Math.max(currentSpeed - 0.08, 5);
-        
-        velocimetro.innerText = Math.floor(currentSpeed * 12) + " km/h";
-        lineOffset = (lineOffset - currentSpeed * 2) % 100;
+function lanzarNotificacion(){
 
-        // --- LÓGICA DE SUEÑO Y MICRO-SUEÑO ---
-        if (currentSpeed < 6.5) {
-          tiempoLento++;
-        } else {
-          tiempoLento = Math.max(0, tiempoLento - 8);
-          if (!estaEnMicroSueño) opacidadSueño = Math.max(0, opacidadSueño - 0.05);
-        }
+if(!gameStarted) return;
 
-        // Si el sueño es alto, hay probabilidad de micro-sueño (parpadeo largo)
-        if (opacidadSueño >= 0.65 && !estaEnMicroSueño) {
-           // 1.5% de probabilidad por frame de caer en micro-sueño
-           if (Math.random() > 0.985) {
-              estaEnMicroSueño = true;
-              microSueñoInicio = timestamp;
-           }
-        }
+textoElement.innerText =
+misMensajes[Math.floor(Math.random()*misMensajes.length)];
 
-        if (estaEnMicroSueño) {
-          // Duración del micro-sueño: 850 milisegundos
-          if (timestamp - microSueñoInicio < 850) {
-            opacidadSueño = 1; 
-          } else {
-            estaEnMicroSueño = false;
-            // Al despertar, la opacidad vuelve al nivel base de "cansancio"
-            opacidadSueño = 0.6; 
-          }
-        } else {
-          // Oscurecimiento gradual normal
-          if (tiempoLento > 450) {
-            opacidadSueño = Math.min(0.7, opacidadSueño + 0.002);
-          }
-          // Parpadeos cortos aleatorios cuando está muy cansado
-          if (tiempoLento > 1000 && Math.random() > 0.97) {
-            filtroSueño.style.opacity = 1; 
-          }
-        }
+notifElement.classList.add("mostrar");
 
-        filtroSueño.style.opacity = opacidadSueño;
+setTimeout(lanzarNotificacion,8000+Math.random()*4000);
 
-        // Movimiento carril
-        if (keys["ArrowUp"]) car.targetY = lanes[0];
-        if (keys["ArrowDown"]) car.targetY = lanes[1];
-        const diff = car.targetY - car.y;
-        car.y += Math.abs(diff) > car.speed ? Math.sign(diff) * car.speed : diff;
+}
 
-        // Colisiones
-        for (let i = enemyCars.length - 1; i >= 0; i--) {
-          let e = enemyCars[i];
-          e.x -= (e.speed + currentSpeed);
-          if (car.x < e.x + e.width - 45 && car.x + PLAYER_WIDTH - 45 > e.x + 45 && car.y < e.y + e.height - 25 && car.y + PLAYER_HEIGHT > e.y + 25) {
-            gameStarted = false;
-            mensajeEstado.innerText = "¡TE HAS CHOCADO!";
-            btnResetImg.style.display = "block";
-            btnIniciarVerde.style.display = "none";
-            startScreen.style.display = "flex";
-            filtroSueño.style.opacity = 0;
-          }
-          if (e.x < -200) enemyCars.splice(i, 1);
-        }
-      }
+function cerrarMensaje(){
 
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#87CEEB"; ctx.fillRect(0, 0, canvas.width, roadY);
-        ctx.fillStyle = "#2c3e50"; ctx.fillRect(0, roadY, canvas.width, roadHeight);
-        
-        ctx.strokeStyle = "#f1c40f"; ctx.setLineDash([60, 40]); ctx.lineDashOffset = -lineOffset;
-        ctx.beginPath(); ctx.moveTo(0, roadY + roadHeight/2); ctx.lineTo(canvas.width, roadY + roadHeight/2); ctx.stroke();
-        ctx.setLineDash([]);
+notifElement.classList.remove("mostrar");
 
-        if (car.loaded) ctx.drawImage(car.image, car.x, car.y, PLAYER_WIDTH, PLAYER_HEIGHT);
-        enemyCars.forEach(e => {
-          if (e.image.complete) ctx.drawImage(e.image, e.x, e.y, e.width, e.height);
-        });
-      }
+}
 
-      function gameLoop(timestamp) {
-        update(timestamp);
-        draw();
-        if (gameStarted) {
-          if (timestamp - lastSpawnTime > 1500) {
-            enemyCars.push({ x: 1100, y: lanes[Math.floor(Math.random()*2)], width: 180, height: 100, speed: 2, image: enemyImages[Math.floor(Math.random()*3)] });
-            lastSpawnTime = timestamp;
-          }
-        }
-        requestAnimationFrame(gameLoop);
-      }
-      requestAnimationFrame(gameLoop);
-    </script>
-  </body>
+const car={
+x:80,
+y:0,
+targetY:0,
+speed:12,
+image:new Image(),
+loaded:false
+};
+
+car.image.src="images/imagen_coche.png";
+car.image.onload=()=>car.loaded=true;
+
+const enemyImages=[];
+
+["1","2","3"].forEach(n=>{
+const img=new Image();
+img.src=`images/coche_de_cara${n}.png`;
+enemyImages.push(img);
+});
+
+let keys={};
+
+window.addEventListener("keydown",(e)=>{
+
+keys[e.key]=true;
+
+if(e.key.toLowerCase()==="c"){
+
+showControls=!showControls;
+
+divControles.style.display=showControls?"block":"none";
+
+avisoC.style.opacity=showControls?"0":"1";
+
+}
+
+});
+
+window.addEventListener("keyup",(e)=>{
+
+keys[e.key]=false;
+
+});
+
+function setupWorld(){
+
+canvas.width=GAME_WIDTH;
+canvas.height=GAME_HEIGHT;
+
+lanes=[
+roadY+roadHeight*0.25-PLAYER_HEIGHT/2,
+roadY+roadHeight*0.75-PLAYER_HEIGHT/2
+];
+
+car.y=lanes[0];
+car.targetY=lanes[0];
+
+}
+
+setupWorld();
+
+function iniciarPartida(){
+
+enemyCars=[];
+
+currentSpeed=5;
+
+tiempoLento=0;
+opacidadSueño=0;
+estaEnMicroSueño=false;
+
+filtroSueño.style.opacity=0;
+
+gameStarted=true;
+
+startScreen.style.display="none";
+
+cerrarMensaje();
+
+setTimeout(lanzarNotificacion,4000);
+
+}
+
+btnIniciarVerde.onclick=iniciarPartida;
+
+btnResetImg.onclick=()=>{
+
+btnResetImg.style.display="none";
+btnIniciarVerde.style.display="block";
+
+iniciarPartida();
+
+};
+
+function update(timestamp){
+
+if(!gameStarted) return;
+
+if(keys["ArrowRight"])
+currentSpeed=Math.min(currentSpeed+0.03,maxSpeed);
+else if(keys["ArrowLeft"])
+currentSpeed=Math.max(currentSpeed-0.08,5);
+
+velocimetro.innerText=Math.floor(currentSpeed*12)+" km/h";
+
+lineOffset=(lineOffset-currentSpeed*2)%100;
+
+if(currentSpeed<6.5){
+
+tiempoLento++;
+
+}else{
+
+tiempoLento=Math.max(0,tiempoLento-8);
+
+if(!estaEnMicroSueño)
+opacidadSueño=Math.max(0,opacidadSueño-0.05);
+
+}
+
+if(opacidadSueño>=0.65 && !estaEnMicroSueño){
+
+if(Math.random()>0.985){
+
+estaEnMicroSueño=true;
+microSueñoInicio=timestamp;
+
+}
+
+}
+
+if(estaEnMicroSueño){
+
+if(timestamp-microSueñoInicio<850){
+
+opacidadSueño=1;
+
+}else{
+
+estaEnMicroSueño=false;
+opacidadSueño=0.6;
+
+}
+
+}else{
+
+if(tiempoLento>450)
+opacidadSueño=Math.min(0.7,opacidadSueño+0.002);
+
+if(tiempoLento>1000 && Math.random()>0.97)
+filtroSueño.style.opacity=1;
+
+}
+
+filtroSueño.style.opacity=opacidadSueño;
+
+if(keys["ArrowUp"]) car.targetY=lanes[0];
+if(keys["ArrowDown"]) car.targetY=lanes[1];
+
+const diff=car.targetY-car.y;
+
+car.y+=Math.abs(diff)>car.speed
+?Math.sign(diff)*car.speed
+:diff;
+
+for(let i=enemyCars.length-1;i>=0;i--){
+
+let e=enemyCars[i];
+
+e.x-=e.speed+currentSpeed;
+
+if(
+car.x<e.x+e.width-45 &&
+car.x+PLAYER_WIDTH-45>e.x+45 &&
+car.y<e.y+e.height-25 &&
+car.y+PLAYER_HEIGHT>e.y+25
+){
+
+gameStarted=false;
+
+mensajeEstado.innerText="¡TE HAS CHOCADO!";
+
+btnResetImg.style.display="block";
+btnIniciarVerde.style.display="none";
+
+startScreen.style.display="flex";
+
+filtroSueño.style.opacity=0;
+
+}
+
+if(e.x<-200) enemyCars.splice(i,1);
+
+}
+
+}
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#87CEEB";
+ctx.fillRect(0,0,canvas.width,roadY);
+
+ctx.fillStyle="#2c3e50";
+ctx.fillRect(0,roadY,canvas.width,roadHeight);
+
+ctx.strokeStyle="#f1c40f";
+
+ctx.setLineDash([60,40]);
+ctx.lineDashOffset=-lineOffset;
+
+ctx.beginPath();
+ctx.moveTo(0,roadY+roadHeight/2);
+ctx.lineTo(canvas.width,roadY+roadHeight/2);
+ctx.stroke();
+
+ctx.setLineDash([]);
+
+if(car.loaded)
+ctx.drawImage(car.image,car.x,car.y,PLAYER_WIDTH,PLAYER_HEIGHT);
+
+enemyCars.forEach(e=>{
+
+if(e.image.complete)
+ctx.drawImage(e.image,e.x,e.y,e.width,e.height);
+
+});
+
+}
+
+function gameLoop(timestamp){
+
+update(timestamp);
+
+draw();
+
+if(gameStarted){
+
+if(timestamp-lastSpawnTime>1500){
+
+enemyCars.push({
+
+x:1100,
+y:lanes[Math.floor(Math.random()*2)],
+width:180,
+height:100,
+speed:2,
+image:enemyImages[Math.floor(Math.random()*3)]
+
+});
+
+lastSpawnTime=timestamp;
+
+}
+
+}
+
+requestAnimationFrame(gameLoop);
+
+}
+
+requestAnimationFrame(gameLoop);
+
+</script>
+</body>
 </html>
