@@ -277,7 +277,7 @@
           e.x -= (e.speed + currentSpeed);
           if (car.x < e.x + e.width - 45 && car.x + PLAYER_WIDTH - 45 > e.x + 45 && car.y < e.y + e.height - 25 && car.y + PLAYER_HEIGHT > e.y + 25) {
             gameStarted = false;
-            mensajeEstado.innerText = "¡TE HAS DORMIDO AL VOLANTE!";
+            mensajeEstado.innerText = "¡TE HAS CHOCADO!";
             btnResetImg.style.display = "block";
             btnIniciarVerde.style.display = "none";
             startScreen.style.display = "flex";
