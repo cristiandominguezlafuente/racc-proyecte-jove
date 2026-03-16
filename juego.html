@@ -107,6 +107,100 @@
         z-index: 130;
       }
 
+      /* BARRA DE SUEÑO */
+      #barra-sueño-container {
+        position: absolute;
+        top: 60px;
+        left: 30px;
+        width: 250px;
+        height: 18px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 10px;
+        overflow: hidden;
+        z-index: 130;
+      }
+
+      #barra-sueño-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #8e44ad, #9b59b6);
+        transition: width 0.1s ease;
+        position: relative;
+      }
+
+      #barra-sueño-label {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.9);
+        pointer-events: none;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+      }
+
+      #aviso-sueño {
+        position: absolute;
+        top: 85px;
+        left: 30px;
+        color: #fff;
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 130;
+      }
+
+      /* PANTALLA DE DESCANSO */
+      #pantalla-descanso {
+        position: absolute;
+        inset: 0;
+        background: #000;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 5000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+
+      #pantalla-descanso.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      #pantalla-descanso h2 {
+        margin: 0;
+        font-size: 24px;
+        text-align: center;
+        padding: 0 20px;
+      }
+
+      #pantalla-descanso .zzz {
+        margin-top: 20px;
+        font-size: 48px;
+        letter-spacing: 10px;
+        opacity: 0;
+        animation: zzzAnim 1.2s infinite;
+      }
+
+      @keyframes zzzAnim {
+        0% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
       /* AVISO CONTROLES */
 
       #avisoC {
@@ -190,6 +284,7 @@
           <span class="tecla">➡️</span> ACELERAR /
           <span class="tecla">⬅️</span> FRENAR<br>
           <span class="tecla">⬆️⬇️</span> CAMBIAR CARRIL<br>
+          <span class="tecla">Espacio</span> PARAR EN GASOLINERA<br>
           <span class="tecla">C</span> CERRAR
         </div>
       </div>
@@ -205,6 +300,19 @@
       </div>
 
       <div id="velocimetroFijo">0 km/h</div>
+
+      <div id="barra-sueño-container">
+        <div id="barra-sueño-fill"></div>
+        <div id="barra-sueño-label">Barra de cansancio</div>
+      </div>
+      <div id="aviso-sueño">Que sueño… deberías parar (pulsa ESPACIO)</div>
+
+      <div id="pantalla-descanso">
+        <div>
+          <h2>Has parado en una gasolinera a descansar</h2>
+          <div class="zzz">Z Z Z</div>
+        </div>
+      </div>
 
       <div id="startScreen">
         <h1 id="mensajeEstado" style="color:white;margin-bottom:20px;text-align:center">
@@ -238,8 +346,13 @@ const filtroSueño = document.getElementById("filtro-sueño");
 const notifElement = document.getElementById("notificacion-movil");
 const textoElement = document.getElementById("texto-mensaje");
 
+const barraSuenoFill = document.getElementById("barra-sueño-fill");
+const avisoSueno = document.getElementById("aviso-sueño");
+const pantallaDescanso = document.getElementById("pantalla-descanso");
+
 const divControles = document.getElementById("controlesUI");
 const avisoC = document.getElementById("avisoC");
+const gameContainer = document.getElementById("game-container");
 
 let showControls = false;
 
@@ -258,13 +371,15 @@ let enemyCars = [];
 let lastSpawnTime = 0;
 
 let currentSpeed = 5;
-let maxSpeed = 10;
+let maxSpeed = 140 / 12; // 140 km/h
 let lineOffset = 0;
 
-let tiempoLento = 0;
-let opacidadSueño = 0;
-let estaEnMicroSueño = false;
-let microSueñoInicio = 0;
+let sleepMeter = 0; // 0..1
+let sleepWarningShown = false;
+let isResting = false;
+let restStart = 0;
+const restDuration = 5000; // 5s
+let lastTimestamp = 0;
 
 const misMensajes = [
 "¿Dónde estás? 📍",
@@ -359,9 +474,14 @@ enemyCars=[];
 
 currentSpeed=5;
 
-tiempoLento=0;
-opacidadSueño=0;
-estaEnMicroSueño=false;
+sleepMeter=0;
+sleepWarningShown=false;
+isResting=false;
+restStart=0;
+lastTimestamp=0;
+
+barraSuenoFill.style.width = "0%";
+avisoSueno.style.opacity = 0;
 
 filtroSueño.style.opacity=0;
 
@@ -397,56 +517,63 @@ currentSpeed=Math.max(currentSpeed-0.08,5);
 
 velocimetro.innerText=Math.floor(currentSpeed*12)+" km/h";
 
+const delta = lastTimestamp ? timestamp - lastTimestamp : 0;
+lastTimestamp = timestamp;
+
+if (isResting) {
+  const elapsed = timestamp - restStart;
+  if (elapsed >= restDuration) {
+    isResting = false;
+    pantallaDescanso.classList.remove("visible");
+    sleepMeter = 0;
+    sleepWarningShown = false;
+    avisoSueno.style.opacity = 0;
+    currentSpeed = 5;
+  }
+  // Durante el descanso no actualizamos el mundo
+  return;
+}
+
 lineOffset=(lineOffset-currentSpeed*2)%100;
 
-if(currentSpeed<6.5){
-
-tiempoLento++;
-
-}else{
-
-tiempoLento=Math.max(0,tiempoLento-8);
-
-if(!estaEnMicroSueño)
-opacidadSueño=Math.max(0,opacidadSueño-0.05);
-
+// Efecto de shake para altas velocidades
+let shakeIntensity = 0;
+const minShakeSpeed = 120 / 12; // 10
+const maxShakeSpeed = 140 / 12; // ~11.666
+if (currentSpeed > minShakeSpeed && currentSpeed <= maxShakeSpeed) {
+  shakeIntensity = (currentSpeed - minShakeSpeed) / (maxShakeSpeed - minShakeSpeed);
+}
+if (shakeIntensity > 0) {
+  let multiplier = 15; // base 15, max 7.5px
+  if (currentSpeed > 130 / 12) { // >10.833
+    multiplier = 25; // más fuerte, max 12.5px
+  }
+  const shakeX = (Math.random() - 0.5) * shakeIntensity * multiplier;
+  const shakeY = (Math.random() - 0.5) * shakeIntensity * multiplier;
+  gameContainer.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
+} else {
+  gameContainer.style.transform = '';
 }
 
-if(opacidadSueño>=0.65 && !estaEnMicroSueño){
+// Barra de sueño: sube lentamente con el tiempo
+sleepMeter = Math.min(1, sleepMeter + delta / 40000);
+barraSuenoFill.style.width = `${sleepMeter * 100}%`;
 
-if(Math.random()>0.985){
-
-estaEnMicroSueño=true;
-microSueñoInicio=timestamp;
-
+const warningThreshold = 0.85;
+if (sleepMeter >= warningThreshold) {
+  avisoSueno.style.opacity = 1;
+  barraSuenoFill.style.background = "linear-gradient(90deg, #c0392b, #e74c3c)";
+  if (keys[" "] && !isResting) {
+    isResting = true;
+    restStart = timestamp;
+    pantallaDescanso.classList.add("visible");
+    currentSpeed = 0;
+    gameContainer.style.transform = '';
+  }
+} else {
+  avisoSueno.style.opacity = 0;
+  barraSuenoFill.style.background = "linear-gradient(90deg, #8e44ad, #9b59b6)";
 }
-
-}
-
-if(estaEnMicroSueño){
-
-if(timestamp-microSueñoInicio<850){
-
-opacidadSueño=1;
-
-}else{
-
-estaEnMicroSueño=false;
-opacidadSueño=0.6;
-
-}
-
-}else{
-
-if(tiempoLento>450)
-opacidadSueño=Math.min(0.7,opacidadSueño+0.002);
-
-if(tiempoLento>1000 && Math.random()>0.97)
-filtroSueño.style.opacity=1;
-
-}
-
-filtroSueño.style.opacity=opacidadSueño;
 
 if(keys["ArrowUp"]) car.targetY=lanes[0];
 if(keys["ArrowDown"]) car.targetY=lanes[1];
@@ -529,7 +656,7 @@ update(timestamp);
 
 draw();
 
-if(gameStarted){
+if(gameStarted && !isResting){
 
 if(timestamp-lastSpawnTime>1500){
 
