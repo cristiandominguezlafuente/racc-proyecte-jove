@@ -266,6 +266,59 @@
         margin-bottom: 20px;
         cursor: pointer;
       }
+
+      /* FILTROS DE CLIMA */
+      #filtro-clima {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 2600;
+        transition: opacity 0.3s;
+      }
+
+      #aviso-clima {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        z-index: 2410;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+        text-align: center;
+      }
+
+      /* ZONAS INVISIBLES PARA FLECHAS */
+      .zona-flecha {
+        position: absolute;
+        bottom: 0;
+        width: 80px;
+        height: 90px;
+        background: transparent;
+        cursor: pointer;
+        z-index: 100;
+      }
+
+      #zona-flecha-arriba {
+        left: 433px;
+        width: 40px;
+        height: 40px;
+        bottom: 85px;
+      }
+
+      #zona-flecha-abajo {
+        right: 354px;
+        width: 40px;
+        height: 40px;
+        bottom: 85px;
+      }
     </style>
   </head>
 
@@ -288,7 +341,14 @@
         </div>
       </div>
 
+      <div id="zona-flecha-arriba" class="zona-flecha"></div>
+      <div id="zona-flecha-abajo" class="zona-flecha"></div>
+
       <div id="filtro-sueño"></div>
+
+      <div id="filtro-clima"></div>
+
+      <div id="aviso-clima"></div>
 
       <div id="notificacion-movil">
         <div class="notificacion-header">
@@ -343,6 +403,12 @@
 
       const filtroSueño = document.getElementById("filtro-sueño");
 
+      const filtroClima = document.getElementById("filtro-clima");
+      const avisoClima = document.getElementById("aviso-clima");
+
+      const zonaFlechaArriba = document.getElementById("zona-flecha-arriba");
+      const zonaFlechaAbajo = document.getElementById("zona-flecha-abajo");
+
       const notifElement = document.getElementById("notificacion-movil");
       const textoElement = document.getElementById("texto-mensaje");
 
@@ -381,6 +447,15 @@
       const restDuration = 5000; // 5s
       let lastTimestamp = 0;
 
+      // Sistema de clima
+      let climaActual = null; // null, "frio", "calor"
+      let climaStartTime = 0;
+      let climaDuration = 0;
+      let lastClimaTime = 0;
+      const climaCooldown = 15000; // Clima puede activarse cada 15 segundos
+      const climaDurationRange = [8000, 12000]; // Duración del clima entre 8-12 segundos
+      const climaProbability = 0.3; // 30% de probabilidad de que se active clima
+
       const misMensajes = [
         "¿Dónde estás? 📍",
         "¡Mira esto! 😂",
@@ -401,6 +476,41 @@
 
       function cerrarMensaje() {
         notifElement.classList.remove("mostrar");
+      }
+
+      function activarClimaAleatorio() {
+        if (climaActual !== null) return; // Si ya hay clima activo, no activar otro
+
+        const ahora = performance.now();
+        if (ahora - lastClimaTime < climaCooldown) return; // Esperar cooldown
+
+        if (Math.random() > climaProbability) return; // Probabilidad de activación
+
+        const tipoClima = Math.random() > 0.5 ? "frio" : "calor";
+        climaActual = tipoClima;
+        climaStartTime = ahora;
+        climaDuration = climaDurationRange[0] + Math.random() * (climaDurationRange[1] - climaDurationRange[0]);
+        lastClimaTime = ahora;
+
+        // Actualizar color del filtro
+        if (tipoClima === "frio") {
+          filtroClima.style.backgroundColor = "rgba(100, 150, 255, 0.6)";
+          avisoClima.innerText = "❄️ FRÍO - Presiona ⬆️";
+        } else {
+          filtroClima.style.backgroundColor = "rgba(255, 100, 0, 0.7)"; // Naranja más intenso
+          avisoClima.innerText = "🔥 CALOR - Presiona ⬇️";
+        }
+
+        filtroClima.style.opacity = "1";
+        avisoClima.style.opacity = "1";
+      }
+
+      function corregirClima(tipo) {
+        if (climaActual === tipo) {
+          climaActual = null;
+          filtroClima.style.opacity = "0";
+          avisoClima.style.opacity = "0";
+        }
       }
 
       const car = {
@@ -441,6 +551,19 @@
         keys[e.key] = false;
       });
 
+      // Event listeners para las zonas invisibles de flechas
+      zonaFlechaArriba.addEventListener("click", () => {
+        if (climaActual === "frio") {
+          corregirClima("frio");
+        }
+      });
+
+      zonaFlechaAbajo.addEventListener("click", () => {
+        if (climaActual === "calor") {
+          corregirClima("calor");
+        }
+      });
+
       function setupWorld() {
         canvas.width = GAME_WIDTH;
         canvas.height = GAME_HEIGHT;
@@ -466,6 +589,13 @@
         isResting = false;
         restStart = 0;
         lastTimestamp = 0;
+
+        // Reset del clima
+        climaActual = null;
+        climaStartTime = 0;
+        lastClimaTime = 0;
+        filtroClima.style.opacity = "0";
+        avisoClima.style.opacity = "0";
 
         barraSuenoFill.style.width = "0%";
         avisoSueno.style.opacity = 0;
@@ -493,15 +623,37 @@
       function update(timestamp) {
         if (!gameStarted) return;
 
-        if (keys["ArrowRight"])
-          currentSpeed = Math.min(currentSpeed + 0.03, maxSpeed);
-        else if (keys["ArrowLeft"])
-          currentSpeed = Math.max(currentSpeed - 0.08, 5);
-
-        velocimetro.innerText = Math.floor(currentSpeed * 12) + " km/h";
-
         const delta = lastTimestamp ? timestamp - lastTimestamp : 0;
         lastTimestamp = timestamp;
+
+        // Intentar activar clima aleatorio
+        activarClimaAleatorio();
+
+        // El clima se mantiene activo hasta que el usuario lo corrija
+        // No se desactiva automáticamente
+
+        // Cambiar carril normalmente con flechas (sin conflicto con clima)
+        if (keys["ArrowUp"]) car.targetY = lanes[0];
+        if (keys["ArrowDown"]) car.targetY = lanes[1];
+
+        // Controles de velocidad
+        let speedMultiplier = 1;
+
+        // Si hay frío, ralentizar
+        if (climaActual === "frio") {
+          speedMultiplier = 0.5; // Ralentizar al 50%
+        }
+        // Si hay calor, acelerar
+        else if (climaActual === "calor") {
+          speedMultiplier = 1.5; // Acelerar al 150%
+        }
+
+        if (keys["ArrowRight"])
+          currentSpeed = Math.min(currentSpeed + 0.03 * speedMultiplier, maxSpeed);
+        else if (keys["ArrowLeft"])
+          currentSpeed = Math.max(currentSpeed - 0.08 * speedMultiplier, 5);
+
+        velocimetro.innerText = Math.floor(currentSpeed * 12) + " km/h";
 
         if (isResting) {
           const elapsed = timestamp - restStart;
@@ -536,6 +688,15 @@
           const shakeX = (Math.random() - 0.5) * shakeIntensity * multiplier;
           const shakeY = (Math.random() - 0.5) * shakeIntensity * multiplier;
           gameContainer.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
+        } else if (climaActual === "calor" && climaDuration > 0 && climaStartTime > 0) {
+          // Efecto de mareo progresivo para calor
+          const elapsedClima = timestamp - climaStartTime;
+          const progress = Math.min(elapsedClima / climaDuration, 1); // 0 a 1
+          const intensity = progress * 50; // Máximo 50px de movimiento (muy fuerte)
+          const frequency = 0.008; // Velocidad del balanceo más rápida
+          const balanceoX = Math.sin(timestamp * frequency) * intensity;
+          const balanceoY = Math.cos(timestamp * frequency * 1.3) * intensity * 0.7; // Más movimiento vertical
+          gameContainer.style.transform = `translate(${balanceoX}px, ${balanceoY}px)`;
         } else {
           gameContainer.style.transform = "";
         }
@@ -561,9 +722,6 @@
           barraSuenoFill.style.background =
             "linear-gradient(90deg, #8e44ad, #9b59b6)";
         }
-
-        if (keys["ArrowUp"]) car.targetY = lanes[0];
-        if (keys["ArrowDown"]) car.targetY = lanes[1];
 
         const diff = car.targetY - car.y;
 
