@@ -536,9 +536,18 @@
       });
 
       let keys = {};
+      let lastKeyPressTime = {}; // Para almacenar el tiempo del último press de cada tecla
+      const movementDelay = 700; // 0.7 segundos en milisegundos
 
       window.addEventListener("keydown", (e) => {
         keys[e.key] = true;
+        
+        // Guardar timestamp cuando se presiona la tecla (para delay del frío)
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+          if (!lastKeyPressTime[e.key]) {
+            lastKeyPressTime[e.key] = performance.now();
+          }
+        }
 
         if (e.key.toLowerCase() === "c") {
           showControls = !showControls;
@@ -551,6 +560,10 @@
 
       window.addEventListener("keyup", (e) => {
         keys[e.key] = false;
+        // Limpiar el timestamp cuando se suelta la tecla
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+          delete lastKeyPressTime[e.key];
+        }
       });
 
       // Event listeners para las zonas invisibles de flechas
@@ -635,8 +648,37 @@
         // No se desactiva automáticamente
 
         // Cambiar carril normalmente con flechas (sin conflicto con clima)
-        if (keys["ArrowUp"]) car.targetY = lanes[0];
-        if (keys["ArrowDown"]) car.targetY = lanes[1];
+        // Con frío, hay un delay de 0.7s desde que presionas hasta que se mueve
+        if (keys["ArrowUp"]) {
+          let canMove = true;
+          if (climaActual === "frio" && lastKeyPressTime["ArrowUp"]) {
+            // Con frío, esperar 0.7 segundos antes de mover
+            const timeSincePress = timestamp - lastKeyPressTime["ArrowUp"];
+            if (timeSincePress < movementDelay) {
+              canMove = false;
+            } else {
+              // Ya pasó el delay, ejecutar movimiento una sola vez
+              canMove = true;
+              delete lastKeyPressTime["ArrowUp"]; // Limpiar para que no se repita
+            }
+          }
+          if (canMove) car.targetY = lanes[0];
+        }
+        if (keys["ArrowDown"]) {
+          let canMove = true;
+          if (climaActual === "frio" && lastKeyPressTime["ArrowDown"]) {
+            // Con frío, esperar 0.7 segundos antes de mover
+            const timeSincePress = timestamp - lastKeyPressTime["ArrowDown"];
+            if (timeSincePress < movementDelay) {
+              canMove = false;
+            } else {
+              // Ya pasó el delay, ejecutar movimiento una sola vez
+              canMove = true;
+              delete lastKeyPressTime["ArrowDown"]; // Limpiar para que no se repita
+            }
+          }
+          if (canMove) car.targetY = lanes[1];
+        }
 
         // Controles de velocidad
         let speedMultiplier = 1;
@@ -721,7 +763,8 @@
 
         // Oscurecer pantalla progresivamente a partir del 70%
         if (sleepMeter >= darkThreshold && !isResting) {
-          const darkProgress = (sleepMeter - darkThreshold) / (1 - darkThreshold); // 0 a 1
+          const darkProgress =
+            (sleepMeter - darkThreshold) / (1 - darkThreshold); // 0 a 1
           const darkOpacity = Math.min(darkProgress * 0.6, 0.6); // Máximo 60% oscuridad
           filtroSueño.style.opacity = darkOpacity;
         } else if (!isResting) {
@@ -731,7 +774,8 @@
         // Parpadeo cuando la barra está al máximo
         if (sleepMeter >= maxThreshold && !isResting) {
           const blinkFrequency = 0.01; // Velocidad del parpadeo
-          const blinkIntensity = Math.sin(timestamp * blinkFrequency * 0.15) > 0.5 ? 1 : 0.3;
+          const blinkIntensity =
+            Math.sin(timestamp * blinkFrequency * 0.15) > 0.5 ? 1 : 0.3;
           filtroSueño.style.opacity = blinkIntensity;
         }
 
