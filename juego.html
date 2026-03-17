@@ -537,11 +537,11 @@
 
       let keys = {};
       let lastKeyPressTime = {}; // Para almacenar el tiempo del último press de cada tecla
-      const movementDelay = 700; // 0.7 segundos en milisegundos
+      const movementDelay = 400; // 0.4 segundos en milisegundos
 
       window.addEventListener("keydown", (e) => {
         keys[e.key] = true;
-        
+
         // Guardar timestamp cuando se presiona la tecla (para delay del frío)
         if (e.key === "ArrowUp" || e.key === "ArrowDown") {
           if (!lastKeyPressTime[e.key]) {
@@ -647,37 +647,38 @@
         // El clima se mantiene activo hasta que el usuario lo corrija
         // No se desactiva automáticamente
 
-        // Cambiar carril normalmente con flechas (sin conflicto con clima)
-        // Con frío, hay un delay de 0.7s desde que presionas hasta que se mueve
+        // Cambiar carril
+        // Sin frío: funciona normal
+        // Con frío: un toque, espera 0.4s, luego se mueve mientras mantengas la flecha
+
         if (keys["ArrowUp"]) {
-          let canMove = true;
-          if (climaActual === "frio" && lastKeyPressTime["ArrowUp"]) {
-            // Con frío, esperar 0.7 segundos antes de mover
-            const timeSincePress = timestamp - lastKeyPressTime["ArrowUp"];
-            if (timeSincePress < movementDelay) {
-              canMove = false;
-            } else {
-              // Ya pasó el delay, ejecutar movimiento una sola vez
-              canMove = true;
-              delete lastKeyPressTime["ArrowUp"]; // Limpiar para que no se repita
+          if (climaActual === "frio") {
+            // Con frío, hay delay de 0.4s
+            if (lastKeyPressTime["ArrowUp"]) {
+              const timeSincePress = timestamp - lastKeyPressTime["ArrowUp"];
+              if (timeSincePress >= movementDelay) {
+                car.targetY = lanes[0];
+              }
             }
+          } else {
+            // Sin frío, funciona normal
+            car.targetY = lanes[0];
           }
-          if (canMove) car.targetY = lanes[0];
         }
+
         if (keys["ArrowDown"]) {
-          let canMove = true;
-          if (climaActual === "frio" && lastKeyPressTime["ArrowDown"]) {
-            // Con frío, esperar 0.7 segundos antes de mover
-            const timeSincePress = timestamp - lastKeyPressTime["ArrowDown"];
-            if (timeSincePress < movementDelay) {
-              canMove = false;
-            } else {
-              // Ya pasó el delay, ejecutar movimiento una sola vez
-              canMove = true;
-              delete lastKeyPressTime["ArrowDown"]; // Limpiar para que no se repita
+          if (climaActual === "frio") {
+            // Con frío, hay delay de 0.4s
+            if (lastKeyPressTime["ArrowDown"]) {
+              const timeSincePress = timestamp - lastKeyPressTime["ArrowDown"];
+              if (timeSincePress >= movementDelay) {
+                car.targetY = lanes[1];
+              }
             }
+          } else {
+            // Sin frío, funciona normal
+            car.targetY = lanes[1];
           }
-          if (canMove) car.targetY = lanes[1];
         }
 
         // Controles de velocidad
