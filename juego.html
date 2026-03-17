@@ -107,6 +107,21 @@
         z-index: 130;
       }
 
+      #contador-puntos {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: #f1c40f;
+        padding: 6px 20px;
+        border-radius: 6px;
+        font-size: 18px;
+        font-weight: bold;
+        border: 1.5px solid #f1c40f;
+        z-index: 130;
+      }
+
       /* BARRA DE SUEÑO */
       #barra-sueño-container {
         position: absolute;
@@ -365,6 +380,8 @@
 
       <div id="velocimetroFijo">0 km/h</div>
 
+      <div id="contador-puntos">Puntos: 0</div>
+
       <div id="barra-sueño-container">
         <div id="barra-sueño-fill"></div>
         <div id="barra-sueño-label">Barra de cansancio</div>
@@ -418,6 +435,7 @@
       const barraSuenoFill = document.getElementById("barra-sueño-fill");
       const avisoSueno = document.getElementById("aviso-sueño");
       const pantallaDescanso = document.getElementById("pantalla-descanso");
+      const contadorPuntos = document.getElementById("contador-puntos");
 
       const divControles = document.getElementById("controlesUI");
       const avisoC = document.getElementById("avisoC");
@@ -449,6 +467,8 @@
       let restStart = 0;
       const restDuration = 5000; // 5s
       let lastTimestamp = 0;
+      let puntos = 0; // Contador de puntos
+      let ultimaActualizacionPuntos = 0; // Último timestamp de actualización de puntos
 
       // Sistema de clima
       let climaActual = null; // null, "frio", "calor"
@@ -607,6 +627,9 @@
         isResting = false;
         restStart = 0;
         lastTimestamp = 0;
+        puntos = 0; // Resetear puntos
+        ultimaActualizacionPuntos = 0;
+        contadorPuntos.innerText = "Puntos: 0";
 
         // Reset del clima
         climaActual = null;
@@ -705,6 +728,13 @@
           currentSpeed = Math.max(currentSpeed - 0.08 * speedMultiplier, 5);
 
         velocimetro.innerText = Math.floor(currentSpeed * 12) + " km/h";
+
+        // Actualizar puntos cada segundo
+        if (timestamp - ultimaActualizacionPuntos >= 1000 && !isResting) {
+          puntos += 10;
+          ultimaActualizacionPuntos = timestamp;
+          contadorPuntos.innerText = `Puntos: ${puntos}`;
+        }
 
         if (isResting) {
           const elapsed = timestamp - restStart;
@@ -820,7 +850,7 @@
           ) {
             gameStarted = false;
 
-            mensajeEstado.innerText = "¡TE HAS CHOCADO!";
+            mensajeEstado.innerText = `¡TE HAS CHOCADO!\nPuntuación: ${puntos}`;
 
             btnResetImg.style.display = "block";
             btnIniciarVerde.style.display = "none";
