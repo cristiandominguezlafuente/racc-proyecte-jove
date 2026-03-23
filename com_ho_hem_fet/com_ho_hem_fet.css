@@ -237,71 +237,83 @@ nav img {
 }
 
 /* =========================
-   SECCIÓN PIXEL ART (MÁS FOTOS, MENOS TEXTO)
+   SECCIÓN PIXEL ART (GRANDE Y DISTRIBUIDA)
 ========================= */
 
 #pixel-art-section {
-  background-color: #fff5ca; /* Color diferente para separar de la anterior */
-  flex-direction: row-reverse; /* Invertimos el orden para dinamismo */
-  align-items: stretch;
+  background-color: #fff5ca;
+  flex-direction: row-reverse;
+  align-items: center; /* Centra verticalmente el texto respecto a las fotos */
+  max-height: none;
+  padding: 80px 5%; /* Más espacio arriba y abajo para que la sección destaque */
+  gap: 50px;
 }
 
-/* El texto ocupa poco espacio (aprox 30%) */
+/* Hacemos el recuadro de texto mucho más ancho y cómodo */
 #pixel-art-section .section-texto {
-  flex: 0.6;
+  flex: 1; /* Ahora tiene el mismo peso que el bloque de imágenes */
+  padding: 50px;
+  box-sizing: border-box;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12); /* Sombra más elegante */
 }
 
-/* Las imágenes ocupan mucho espacio (aprox 70%) */
+/* El contenedor de imágenes se expande para lucir las 4 fotos */
 #pixel-art-section .section-imagenes {
-  flex: 1.6;
+  flex: 1.5; /* Sigue siendo el protagonista visual */
   display: flex;
+  height: 550px; /* Altura fija para que el mosaico sea perfecto */
 }
 
 .grid-pixel {
   display: flex;
-  gap: 12px;
   width: 100%;
+  gap: 20px; /* Más aire entre los píxeles */
 }
 
-/* Imagen destacada del diseño */
+/* Mantenemos la foto grande (1/4) */
 .pixel-gran {
-  flex: 1.2;
+  flex: 1.6;
   height: 100% !important;
   object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
 }
 
-/* Columna lateral con 3 imágenes pequeñas */
+/* Columna con las 3 fotos pequeñas (3/4) */
 .pixel-mini-grid {
-  flex: 0.8;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 20px;
 }
 
 .pixel-mini-grid img {
-  height: calc(33.33% - 8px) !important;
+  height: calc(
+    33.33% - 13.3px
+  ) !important; /* Ajuste preciso para 3 fotos + 2 gaps */
   width: 100% !important;
   object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 15px;
 }
 
-/* Ajuste para móvil */
+/* Ajuste para pantallas medianas (Portátiles pequeños) */
+@media (max-width: 1200px) {
+  #pixel-art-section {
+    gap: 30px;
+    padding: 60px 3%;
+  }
+}
+
+/* Ajuste para móvil (Apilado vertical) */
 @media (max-width: 900px) {
   #pixel-art-section .section-imagenes {
-    height: 700px;
-  }
-  .grid-pixel {
-    flex-direction: column;
+    height: 600px;
   }
   .pixel-mini-grid {
-    flex-direction: row;
-    height: 40%;
+    flex-direction: row; /* En móvil las 3 pequeñas se ponen en fila */
+    height: 30%;
   }
-  .pixel-mini-grid img {
-    height: 100% !important;
+  .pixel-gran {
+    height: 70% !important;
   }
 }
 
