@@ -26,6 +26,7 @@ body {
 
 .barra-superior {
   background-color: black;
+  border-bottom: #ffd829 2px solid;
   width: 100%;
   height: 50px;
 }
@@ -277,38 +278,6 @@ footer img {
   }
 }
 
-.section-explicacion:nth-child(odd) .section-texto {
-  animation: slideInLeft 0.8s ease forwards;
-}
-
-.section-explicacion:nth-child(odd) .section-imagenes {
-  animation: slideInRight 0.8s ease forwards;
-}
-
-.section-explicacion:nth-child(even) .section-texto {
-  animation: slideInRight 0.8s ease forwards;
-}
-
-.section-explicacion:nth-child(even) .section-imagenes {
-  animation: slideInLeft 0.8s ease forwards;
-}
-
-/* Estils addicionals per donar un cop de disseny */
-.section-texto {
-  position: relative;
-  overflow: hidden;
-}
-
-.section-texto::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(to bottom, #ffd829, #333);
-}
-
 .grid-fotos {
   position: relative;
 }
@@ -321,6 +290,5 @@ footer img {
   transform: translateX(-50%);
   width: 80%;
   height: 4px;
-  background: linear-gradient(to right, transparent, #ffd829, transparent);
   border-radius: 2px;
 }
