@@ -183,6 +183,53 @@ nav img {
 }
 
 /* =========================
+   GRID ESPECIAL SECCIÓN JUEGO
+========================= */
+
+/* Forzamos que texto e imagen sean 1:1 en esta sección */
+#desenvolupament-joc .section-texto,
+#desenvolupament-joc .section-imagenes {
+  flex: 1;
+}
+
+.grid-especial {
+  display: flex;
+  gap: 10px;
+  height: 100%;
+  width: 100%;
+}
+
+.foto-principal {
+  flex: 1.5; /* La foto grande de la izquierda */
+  height: 100% !important;
+  object-fit: cover;
+}
+
+.columna-fotos {
+  flex: 1; /* El bloque de la derecha con las dos pequeñas */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.columna-fotos img {
+  height: calc(50% - 5px) !important;
+  width: 100% !important;
+  object-fit: cover;
+}
+
+/* Ajuste para que en móvil no se rompa el grid especial */
+@media (max-width: 900px) {
+  .grid-especial {
+    flex-direction: column;
+    height: 500px;
+  }
+  .columna-fotos {
+    flex-direction: row;
+  }
+}
+
+/* =========================
    FOOTER & ANIMACIONES
 ========================= */
 footer {
