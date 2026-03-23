@@ -1,13 +1,11 @@
 /* =========================
    RESET / BASE
 ========================= */
-
 body {
   background-color: #ffffff;
   margin: 0;
   padding: 0;
   font-family: "Montserrat", sans-serif;
-
   animation: fadePage 1s ease-in-out;
 }
 
@@ -21,9 +19,8 @@ body {
 }
 
 /* =========================
-   BARRA SUPERIOR
+   BARRA SUPERIOR & NAV
 ========================= */
-
 .barra-superior {
   background-color: black;
   border-bottom: #ffd829 2px solid;
@@ -31,17 +28,12 @@ body {
   height: 50px;
 }
 
-/* =========================
-   NAVBAR
-========================= */
-
 nav {
   display: flex;
   justify-content: space-between;
   background-color: #ffffff;
   height: 100px;
   padding: 15px 25px;
-
   animation: slideDown 0.8s ease forwards;
   opacity: 0;
 }
@@ -61,25 +53,20 @@ nav {
   display: flex;
   align-items: center;
 }
-
 nav img {
   width: 330px;
   height: 88px;
-  transition: transform 0.3s ease;
 }
-
 .nav-links {
   display: flex;
   gap: 25px;
   align-items: center;
 }
-
 .nav-links a {
   position: relative;
   text-decoration: none;
   color: #57595d;
   font-weight: 500;
-  transition: color 0.3s ease;
 }
 
 .nav-links a::after {
@@ -92,34 +79,24 @@ nav img {
   background-color: black;
   transition: width 0.3s ease;
 }
-
 .nav-links a:hover::after {
   width: 100%;
 }
 
-.no-link {
-  display: flex;
-  align-items: center;
-  color: black;
-  text-decoration: none;
-}
-
 /* =========================
-   TÍTULO
+   TÍTULO PRINCIPAL
 ========================= */
-
 .titulo_como_hem_fet {
   background-color: #ffd829;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 300px;
+  height: 250px;
   width: 100%;
   margin: 0;
-  font-size: 50px;
+  font-size: 40px;
   font-weight: bold;
   text-align: center;
-
   opacity: 0;
   transform: translateY(40px);
   animation: aparecer 0.8s ease forwards;
@@ -127,163 +104,100 @@ nav img {
 }
 
 /* =========================
-   SECCIÓN EXPLICACIÓN
+   SECCIONES DE EXPLICACIÓN
 ========================= */
-
 .section-explicacion {
-  background-color: #fff5ca;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 60px 25px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  padding: 50px 8%;
   gap: 30px;
-
   opacity: 0;
   transform: translateY(40px);
   animation: aparecer 0.8s ease forwards;
+  max-height: 600px; /* Limitamos la altura para que las fotos no sean gigantes */
 }
 
-#planificacio.section-explicacion {
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 150px;
+.section-explicacion:nth-child(odd) {
+  background-color: #fff5ca;
 }
-
-#planificacio .section-texto,
-#planificacio .section-imagenes {
-  order: initial;
-  width: 500px;
-}
-
-.section-explicacion:not(#planificacio) {
-  flex-direction: column;
-}
-
 .section-explicacion:nth-child(even) {
   background-color: #f9f9f9;
-}
-.section-explicacion:nth-child(3) {
-  animation-delay: 1.4s;
+  flex-direction: row-reverse;
 }
 
-.section-explicacion:nth-child(4) {
-  animation-delay: 1.8s;
-}
-
-.section-explicacion:nth-child(5) {
-  animation-delay: 2.2s;
-}
-
+/* RECUADRO DE TEXTO */
 .section-texto {
-  width: 500px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  flex: 1.2; /* El texto ocupa un poco más de espacio */
+  background: rgba(255, 255, 255, 0.95);
+  padding: 35px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* TEXTO ARRIBA, NO EN EL MEDIO */
+  overflow-y: auto; /* Por si el texto es muy largo */
 }
 
 .section-texto h2 {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 15px;
+  font-size: 26px;
+  margin-top: 0;
+  margin-bottom: 20px;
   color: black;
+  border-left: 5px solid #ffd829;
+  padding-left: 15px;
 }
 
 .section-texto p {
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.6;
-  margin-bottom: 15px;
+  color: #333;
+  margin-top: 0;
 }
 
-.section-texto {
-  width: 100%;
-  max-width: 700px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* CONTENEDOR DE IMÁGENES */
+.section-imagenes {
+  flex: 0.8; /* Las imágenes ahora son más estrechas */
+  display: flex;
 }
-
-.section-explicacion:not(#planificacio) .section-imagenes {
-  width: 100%;
-  max-width: 900px;
-  order: 2;
-}
-
-.section-explicacion:not(#planificacio) .section-texto {
-  order: 1;
-}
-
-#planificacio .section-imagenes,
-#planificacio .section-texto {
-  order: initial;
-}
-
-/* =========================
-   GRID FOTOS
-========================= */
 
 .grid-fotos {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-
-  opacity: 0;
-  transform: translateY(40px);
-  animation: aparecer 0.8s ease forwards;
-  animation-delay: 0.8s;
+  gap: 10px;
+  width: 100%;
 }
 
 .grid-fotos img {
-  width: calc(50% - 7.5px);
-  max-width: 500px;
-  height: auto;
-  object-fit: cover;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.grid-fotos img:only-child {
   width: 100%;
-  max-width: 900px;
+  height: 100%;
+  object-fit: cover; /* Mantiene la estética sin deformar */
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.grid-fotos.two-photos {
-  justify-content: space-between;
-}
-
-.grid-fotos img:only-child {
-  max-height: none;
+/* Si hay 2 fotos, se apilan o se dividen */
+.grid-fotos img:not(:only-child) {
+  height: calc(50% - 5px);
 }
 
 /* =========================
-   FOOTER
+   FOOTER & ANIMACIONES
 ========================= */
-
 footer {
   background-color: black;
   display: flex;
   justify-content: center;
   align-items: center;
   border-top: #ffd829 2px solid;
-  width: 100%;
-  height: 80px;
+  height: 90px;
   color: white;
-  font-size: 13px;
-  gap: 20px;
+  gap: 25px;
 }
-
 footer img {
   height: 40px;
-  width: auto;
 }
-
-/* =========================
-   ANIMACIONES GENERALES
-========================= */
 
 @keyframes aparecer {
   to {
@@ -292,39 +206,13 @@ footer img {
   }
 }
 
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
+@media (max-width: 900px) {
+  .section-explicacion,
+  .section-explicacion:nth-child(even) {
+    flex-direction: column;
+    max-height: none;
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+  .section-imagenes {
+    height: 300px;
   }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.grid-fotos {
-  position: relative;
-}
-
-.grid-fotos::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  height: 4px;
-  border-radius: 2px;
 }
