@@ -361,7 +361,9 @@
       </div>
       <div id="aviso-sueño">Que sueño… deberías parar (pulsa ESPACIO)</div>
 
-      <div id="aviso-controles">Pulsa <span class="tecla">C</span> para ver los controles</div>
+      <div id="aviso-controles">
+        Pulsa <span class="tecla">C</span> para ver los controles
+      </div>
 
       <div id="pantalla-descanso">
         <img src="images/dormir.png" id="dormir-base" alt="Durmiendo" />
@@ -541,9 +543,11 @@
           controlesVisibles = !controlesVisibles;
           const avisoControles = document.getElementById("aviso-controles");
           if (controlesVisibles) {
-            avisoControles.innerHTML = "Controles:<br>⬅️ Frenar | ➡️ Acelerar<br>⬆️⬇️ Cambiar carril<br>Interior coche: ⬆️⬇️ Temperatura";
+            avisoControles.innerHTML =
+              "Controles:<br>⬅️ Frenar | ➡️ Acelerar<br>⬆️⬇️ Cambiar carril<br>Interior coche: ⬆️⬇️ Temperatura";
           } else {
-            avisoControles.innerHTML = "Pulsa <span class=\"tecla\">C</span> para ver los controles";
+            avisoControles.innerHTML =
+              'Pulsa <span class="tecla">C</span> para ver los controles';
           }
         }
 
