@@ -1,6 +1,3 @@
-/* =========================
-   RESET / BASE
-========================= */
 body {
   background-color: #ffffff;
   margin: 0;
@@ -18,9 +15,6 @@ body {
   }
 }
 
-/* =========================
-   BARRA SUPERIOR & NAV
-========================= */
 .barra-superior {
   background-color: black;
   border-bottom: #ffd829 2px solid;
@@ -53,15 +47,18 @@ nav {
   display: flex;
   align-items: center;
 }
+
 nav img {
   width: 330px;
   height: 88px;
 }
+
 .nav-links {
   display: flex;
   gap: 25px;
   align-items: center;
 }
+
 .nav-links a {
   position: relative;
   text-decoration: none;
@@ -79,13 +76,11 @@ nav img {
   background-color: black;
   transition: width 0.3s ease;
 }
+
 .nav-links a:hover::after {
   width: 100%;
 }
 
-/* =========================
-   TÍTULO PRINCIPAL
-========================= */
 .titulo_como_hem_fet {
   background-color: #ffd829;
   display: flex;
@@ -103,9 +98,6 @@ nav img {
   animation-delay: 0.2s;
 }
 
-/* =========================
-   SECCIONES DE EXPLICACIÓN
-========================= */
 .section-explicacion {
   display: flex;
   flex-direction: row;
@@ -116,28 +108,27 @@ nav img {
   opacity: 0;
   transform: translateY(40px);
   animation: aparecer 0.8s ease forwards;
-  max-height: 600px; /* Limitamos la altura para que las fotos no sean gigantes */
+  max-height: 600px;
 }
 
 .section-explicacion:nth-child(odd) {
   background-color: #fff5ca;
 }
+
 .section-explicacion:nth-child(even) {
   background-color: #f9f9f9;
   flex-direction: row-reverse;
 }
 
-/* RECUADRO DE TEXTO */
 .section-texto {
-  flex: 1.2; /* El texto ocupa un poco más de espacio */
+  flex: 1.2;
   background: rgba(255, 255, 255, 0.95);
   padding: 35px;
   border-radius: 12px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* TEXTO ARRIBA, NO EN EL MEDIO */
-  overflow-y: auto; /* Por si el texto es muy largo */
+  justify-content: flex-start;
 }
 
 .section-texto h2 {
@@ -156,9 +147,8 @@ nav img {
   margin-top: 0;
 }
 
-/* CONTENEDOR DE IMÁGENES */
 .section-imagenes {
-  flex: 0.8; /* Las imágenes ahora son más estrechas */
+  flex: 0.8;
   display: flex;
 }
 
@@ -172,27 +162,21 @@ nav img {
 .grid-fotos img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Mantiene la estética sin deformar */
+  object-fit: cover;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Si hay 2 fotos, se apilan o se dividen */
 .grid-fotos img:not(:only-child) {
   height: calc(50% - 5px);
 }
 
-/* =========================
-   GRID ESPECIAL SECCIÓN JUEGO (MÁS ANCHO)
-========================= */
-
-/* Ajustamos el contenedor de la sección 3 para que las fotos ganen terreno */
 #desenvolupament-joc .section-texto {
-  flex: 0.8; /* El texto ahora es más estrecho */
+  flex: 0.8;
 }
 
 #desenvolupament-joc .section-imagenes {
-  flex: 1.4; /* Las imágenes ahora son mucho más anchas */
+  flex: 1.4;
   display: flex;
   align-items: stretch;
 }
@@ -200,12 +184,11 @@ nav img {
 .grid-especial {
   display: flex;
   width: 100%;
-  gap: 15px; /* Un pelín más de espacio entre fotos queda mejor si son grandes */
+  gap: 15px;
 }
 
-/* La foto grande: la hacemos aún más predominante */
 .foto-principal {
-  flex: 2; /* Aumentamos su proporción interna de 1.5 a 2 */
+  flex: 2;
   width: 0;
   height: 100% !important;
   object-fit: cover;
@@ -213,9 +196,8 @@ nav img {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
-/* El bloque con las dos fotos "largas" (apiladas) */
 .columna-fotos {
-  flex: 1.2; /* También las hacemos un poco más anchas que antes */
+  flex: 1.2;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -223,103 +205,63 @@ nav img {
 
 .columna-fotos img {
   width: 100% !important;
-  height: calc(50% - 7.5px) !important; /* Ajuste preciso del gap */
+  height: calc(50% - 7.5px) !important;
   object-fit: cover;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
-/* Ajuste Responsive */
-@media (max-width: 900px) {
-  #desenvolupament-joc .section-imagenes {
-    height: 600px; /* Más altura en móvil para que luzcan las fotos anchas */
-  }
-}
-
-/* =========================
-   SECCIÓN PIXEL ART (GRANDE Y DISTRIBUIDA)
-========================= */
-
 #pixel-art-section {
   background-color: #fff5ca;
   flex-direction: row-reverse;
-  align-items: center; /* Centra verticalmente el texto respecto a las fotos */
-  max-height: none;
-  padding: 80px 5%; /* Más espacio arriba y abajo para que la sección destaque */
-  gap: 50px;
-}
-
-/* Hacemos el recuadro de texto mucho más ancho y cómodo */
-#pixel-art-section .section-texto {
-  flex: 1; /* Ahora tiene el mismo peso que el bloque de imágenes */
-  padding: 50px;
-  box-sizing: border-box;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12); /* Sombra más elegante */
-}
-
-/* El contenedor de imágenes se expande para lucir las 4 fotos */
-#pixel-art-section .section-imagenes {
-  flex: 1.5; /* Sigue siendo el protagonista visual */
   display: flex;
-  height: 550px; /* Altura fija para que el mosaico sea perfecto */
+  align-items: stretch;
+  padding: 60px 8%;
+  gap: 40px;
+}
+
+#pixel-art-section .section-texto {
+  flex: 1;
+  padding: 40px;
+  box-sizing: border-box;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  /* Sin max-height ni overflow para evitar la barra */
+}
+
+#pixel-art-section .section-imagenes {
+  flex: 1.5;
+  display: flex;
 }
 
 .grid-pixel {
   display: flex;
   width: 100%;
-  gap: 20px; /* Más aire entre los píxeles */
+  gap: 15px;
 }
 
-/* Mantenemos la foto grande (1/4) */
 .pixel-gran {
-  flex: 1.6;
+  flex: 1.5;
+  width: 0;
   height: 100% !important;
   object-fit: cover;
-  border-radius: 15px;
+  border-radius: 12px;
 }
 
-/* Columna con las 3 fotos pequeñas (3/4) */
 .pixel-mini-grid {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 
 .pixel-mini-grid img {
-  height: calc(
-    33.33% - 13.3px
-  ) !important; /* Ajuste preciso para 3 fotos + 2 gaps */
+  flex: 1;
   width: 100% !important;
+  height: 0;
   object-fit: cover;
-  border-radius: 15px;
+  border-radius: 12px;
 }
 
-/* Ajuste para pantallas medianas (Portátiles pequeños) */
-@media (max-width: 1200px) {
-  #pixel-art-section {
-    gap: 30px;
-    padding: 60px 3%;
-  }
-}
-
-/* Ajuste para móvil (Apilado vertical) */
-@media (max-width: 900px) {
-  #pixel-art-section .section-imagenes {
-    height: 600px;
-  }
-  .pixel-mini-grid {
-    flex-direction: row; /* En móvil las 3 pequeñas se ponen en fila */
-    height: 30%;
-  }
-  .pixel-gran {
-    height: 70% !important;
-  }
-}
-
-/* =========================
-   FOOTER & ANIMACIONES
-========================= */
 footer {
   background-color: black;
   display: flex;
@@ -330,6 +272,7 @@ footer {
   color: white;
   gap: 25px;
 }
+
 footer img {
   height: 40px;
 }
@@ -338,16 +281,5 @@ footer img {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@media (max-width: 900px) {
-  .section-explicacion,
-  .section-explicacion:nth-child(even) {
-    flex-direction: column;
-    max-height: none;
-  }
-  .section-imagenes {
-    height: 300px;
   }
 }
