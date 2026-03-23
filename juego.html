@@ -168,6 +168,32 @@
         z-index: 130;
       }
 
+      #aviso-controles {
+        position: absolute;
+        top: 50px;
+        left: 30px;
+        color: #fff;
+        font-size: 14px;
+        opacity: 1;
+        transition: opacity 0.3s;
+        z-index: 130;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 8px 12px;
+        border-radius: 6px;
+        max-width: 300px;
+        line-height: 1.4;
+      }
+
+      .tecla {
+        background: #333;
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: monospace;
+        font-weight: bold;
+        border: 1px solid #666;
+      }
+
       /* PANTALLA DE DESCANSO */
       #pantalla-descanso {
         position: absolute;
@@ -335,6 +361,8 @@
       </div>
       <div id="aviso-sueño">Que sueño… deberías parar (pulsa ESPACIO)</div>
 
+      <div id="aviso-controles">Pulsa <span class="tecla">C</span> para ver los controles</div>
+
       <div id="pantalla-descanso">
         <img src="images/dormir.png" id="dormir-base" alt="Durmiendo" />
         <img src="images/dormir_zzz.gif" id="dormir-zzz" alt="Z Z Z" />
@@ -396,6 +424,7 @@
       const PLAYER_HEIGHT = 90;
 
       let gameStarted = false;
+      let controlesVisibles = false;
       let lanes = [];
       let enemyCars = [];
       let lastSpawnTime = 0;
@@ -507,6 +536,16 @@
 
       window.addEventListener("keydown", (e) => {
         keys[e.key] = true;
+
+        if (e.key === "c" || e.key === "C") {
+          controlesVisibles = !controlesVisibles;
+          const avisoControles = document.getElementById("aviso-controles");
+          if (controlesVisibles) {
+            avisoControles.innerHTML = "Controles:<br>⬅️ Frenar | ➡️ Acelerar<br>⬆️⬇️ Cambiar carril<br>Interior coche: ⬆️⬇️ Temperatura";
+          } else {
+            avisoControles.innerHTML = "Pulsa <span class=\"tecla\">C</span> para ver los controles";
+          }
+        }
 
         // Guardar timestamp cuando se presiona la tecla (para delay del frío)
         if (e.key === "ArrowUp" || e.key === "ArrowDown") {
