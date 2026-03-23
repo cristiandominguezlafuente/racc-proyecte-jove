@@ -2,7 +2,8 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Juego de Coche - Flujo de Inicio</title>
+    <title>Juego de Coche - RACC Mobility</title>
+
     <style>
       body {
         margin: 0;
@@ -38,11 +39,63 @@
         height: 260px;
         object-fit: cover;
         pointer-events: none;
+        z-index: 10;
+      }
+
+      /* CAPA SUEÑO */
+
+      #filtro-sueño {
+        position: absolute;
+        inset: 0;
+        background-color: black;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 2500;
+        transition: opacity 0.1s;
+      }
+
+      /* NOTIFICACIÓN */
+
+      #notificacion-movil {
+        position: absolute;
+        right: -350px;
+        top: 200px;
+        width: 280px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        padding: 15px;
+        z-index: 2000;
+        transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 3px solid #25d366;
+      }
+
+      #notificacion-movil.mostrar {
+        right: 20px !important;
+      }
+
+      .notificacion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #25d366;
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+
+      #cerrar-notificacion {
+        background: #eee;
+        border: none;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        cursor: pointer;
       }
 
       #velocimetroFijo {
         position: absolute;
-        top: 200px;
+        top: 20px;
         right: 30px;
         background: rgba(0, 0, 0, 0.7);
         color: #2ecc71;
@@ -52,145 +105,381 @@
         font-weight: bold;
         border: 1.5px solid #2ecc71;
         z-index: 130;
-        min-width: 80px;
-        text-align: center;
       }
 
-      #avisoC {
+      #contador-puntos {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: #f1c40f;
+        padding: 6px 20px;
+        border-radius: 6px;
+        font-size: 18px;
+        font-weight: bold;
+        border: 1.5px solid #f1c40f;
+        z-index: 130;
+      }
+
+      /* BARRA DE SUEÑO */
+      #barra-sueño-container {
         position: absolute;
         top: 10px;
-        left: 20px;
-        color: white;
-        font-size: 12px;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 4px 8px;
-        border-radius: 4px;
-        z-index: 210;
-        pointer-events: none;
+        left: 30px;
+        width: 250px;
+        height: 18px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 10px;
+        overflow: hidden;
+        z-index: 130;
       }
 
-      #controlesUI {
+      #barra-sueño-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #8e44ad, #9b59b6);
+        transition: width 0.1s ease;
+        position: relative;
+      }
+
+      #barra-sueño-label {
         position: absolute;
-        top: 40px; /* Bajado un poco para no solapar el aviso */
-        left: 20px;
-        background: rgba(0, 0, 0, 0.85);
-        color: white;
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 5px solid #f1c40f;
-        z-index: 200;
-        display: none;
-      }
-      .tecla {
-        color: #f1c40f;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
         font-weight: bold;
+        color: rgba(255, 255, 255, 0.9);
+        pointer-events: none;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
       }
+
+      #aviso-sueño {
+        position: absolute;
+        top: 85px;
+        left: 30px;
+        color: #fff;
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 130;
+      }
+
+      /* PANTALLA DE DESCANSO */
+      #pantalla-descanso {
+        position: absolute;
+        inset: 0;
+        background: #000;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 5000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+
+      #pantalla-descanso.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      #pantalla-descanso img {
+        position: absolute;
+      }
+
+      #dormir-base {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      #dormir-zzz {
+        width: 150px;
+        height: 150px;
+        object-fit: contain;
+        animation: zzz-float 5s ease-in-out forwards;
+      }
+
+      @keyframes zzz-float {
+        0% {
+          transform: translateY(0px);
+          opacity: 1;
+        }
+        50% {
+          transform: translateY(-20px);
+          opacity: 0.8;
+        }
+        100% {
+          transform: translateY(0px);
+          opacity: 1;
+        }
+      }
+
+      /* AVISO CONTROLES */
 
       #startScreen {
         position: absolute;
-        width: 100%;
-        height: 100%;
+        inset: 0;
         background: rgba(0, 0, 0, 0.85);
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        z-index: 100;
+        z-index: 4000;
       }
 
       #btnIniciarVerde {
         background: #2ecc71;
         color: white;
         font-size: 24px;
-        font-weight: bold;
         padding: 15px 40px;
         border: none;
         border-radius: 8px;
         cursor: pointer;
-        box-shadow: 0 4px 0 #27ae60;
       }
 
       #botonReiniciarImg {
         width: 220px;
-        height: auto;
-        cursor: pointer;
         display: none;
-        transition: transform 0.1s;
         margin-bottom: 20px;
+        cursor: pointer;
       }
-      #botonReiniciarImg:hover {
-        transform: scale(1.1);
+
+      /* FILTROS DE CLIMA */
+      #filtro-clima {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 2600;
+        transition: opacity 0.3s;
+      }
+
+      #aviso-clima {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        z-index: 2410;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+        text-align: center;
+      }
+
+      /* ZONAS INVISIBLES PARA FLECHAS */
+      .zona-flecha {
+        position: absolute;
+        bottom: 0;
+        width: 80px;
+        height: 90px;
+        background: transparent;
+        cursor: pointer;
+        z-index: 100;
+      }
+
+      #zona-flecha-arriba {
+        left: 433px;
+        width: 40px;
+        height: 40px;
+        bottom: 85px;
+      }
+
+      #zona-flecha-abajo {
+        right: 354px;
+        width: 40px;
+        height: 40px;
+        bottom: 85px;
       }
     </style>
   </head>
+
   <body>
     <div id="game-container">
-      <div id="avisoC">
-        Pulsa <span class="tecla">C</span> para ver controles
+      <div id="zona-flecha-arriba" class="zona-flecha"></div>
+      <div id="zona-flecha-abajo" class="zona-flecha"></div>
+
+      <div id="filtro-sueño"></div>
+
+      <div id="filtro-clima"></div>
+
+      <div id="aviso-clima"></div>
+
+      <div id="notificacion-movil">
+        <div class="notificacion-header">
+          <span>💬 WhatsApp</span>
+          <button id="cerrar-notificacion" onclick="cerrarMensaje()">×</button>
+        </div>
+        <p id="texto-mensaje">¡Tienes un mensaje!</p>
       </div>
 
       <div id="velocimetroFijo">0 km/h</div>
 
-      <div id="controlesUI">
-        <div style="font-size: 14px; margin-bottom: 5px">
-          <strong>CONTROLES</strong>
-        </div>
-        <div style="font-size: 13px; line-height: 1.5">
-          <span class="tecla">➡️</span> ACELERAR /
-          <span class="tecla">⬅️</span> FRENAR<br />
-          <span class="tecla">⬆️/⬇️</span> CARRIL /
-          <span class="tecla">C</span> CERRAR
-        </div>
+      <div id="contador-puntos">Puntos: 0</div>
+
+      <div id="barra-sueño-container">
+        <div id="barra-sueño-fill"></div>
+        <div id="barra-sueño-label">Barra de cansancio</div>
+      </div>
+      <div id="aviso-sueño">Que sueño… deberías parar (pulsa ESPACIO)</div>
+
+      <div id="pantalla-descanso">
+        <img src="images/dormir.png" id="dormir-base" alt="Durmiendo" />
+        <img src="images/dormir_zzz.gif" id="dormir-zzz" alt="Z Z Z" />
       </div>
 
       <div id="startScreen">
-        <h1 id="mensajeEstado" style="color: white; margin-bottom: 20px">
+        <h1
+          id="mensajeEstado"
+          style="color: white; margin-bottom: 20px; text-align: center"
+        >
           JUEGO DE COCHE
         </h1>
 
-        <img
-          src="images/boton_reiniciar.png"
-          id="botonReiniciarImg"
-          alt="Reiniciar"
-        />
+        <img src="images/boton_reiniciar.png" id="botonReiniciarImg" />
 
         <button id="btnIniciarVerde">INICIAR</button>
       </div>
 
       <canvas id="gameCanvas"></canvas>
+
       <img src="images/img_coche_dentro.png" id="interior-coche" />
     </div>
 
     <script>
       const canvas = document.getElementById("gameCanvas");
       const ctx = canvas.getContext("2d");
+
       const startScreen = document.getElementById("startScreen");
       const btnIniciarVerde = document.getElementById("btnIniciarVerde");
       const btnResetImg = document.getElementById("botonReiniciarImg");
       const mensajeEstado = document.getElementById("mensajeEstado");
       const velocimetro = document.getElementById("velocimetroFijo");
-      const divControles = document.getElementById("controlesUI");
-      const avisoC = document.getElementById("avisoC");
+
+      const filtroSueño = document.getElementById("filtro-sueño");
+
+      const filtroClima = document.getElementById("filtro-clima");
+      const avisoClima = document.getElementById("aviso-clima");
+
+      const zonaFlechaArriba = document.getElementById("zona-flecha-arriba");
+      const zonaFlechaAbajo = document.getElementById("zona-flecha-abajo");
+
+      const notifElement = document.getElementById("notificacion-movil");
+      const textoElement = document.getElementById("texto-mensaje");
+
+      const barraSuenoFill = document.getElementById("barra-sueño-fill");
+      const avisoSueno = document.getElementById("aviso-sueño");
+      const pantallaDescanso = document.getElementById("pantalla-descanso");
+      const contadorPuntos = document.getElementById("contador-puntos");
+
+      const gameContainer = document.getElementById("game-container");
 
       const GAME_WIDTH = 1000;
       const GAME_HEIGHT = 600;
-      let roadHeight = 220;
+
       let roadY = 150;
+      let roadHeight = 220;
+
       const PLAYER_WIDTH = 160;
       const PLAYER_HEIGHT = 90;
 
       let gameStarted = false;
-      let showControls = false;
       let lanes = [];
-      let clouds = [];
       let enemyCars = [];
       let lastSpawnTime = 0;
-      let invencibleHasta = 0;
 
-      let minSpeed = 5;
-      let maxSpeed = 10;
-      let currentSpeed = minSpeed;
+      let currentSpeed = 5;
+      let maxSpeed = 140 / 12; // 140 km/h
       let lineOffset = 0;
+
+      let sleepMeter = 0; // 0..1
+      let sleepWarningShown = false;
+      let isResting = false;
+      let restStart = 0;
+      const restDuration = 5000; // 5s
+      let lastTimestamp = 0;
+      let puntos = 0; // Contador de puntos
+      let ultimaActualizacionPuntos = 0; // Último timestamp de actualización de puntos
+
+      // Sistema de clima
+      let climaActual = null; // null, "frio", "calor"
+      let climaStartTime = 0;
+      let climaDuration = 0;
+      let lastClimaTime = 0;
+      const climaCooldown = 15000; // Clima puede activarse cada 15 segundos
+      const climaDurationRange = [8000, 12000]; // Duración del clima entre 8-12 segundos
+      const climaProbability = 0.3; // 30% de probabilidad de que se active clima
+
+      const misMensajes = [
+        "¿Dónde estás? 📍",
+        "¡Mira esto! 😂",
+        "Mama: ¿Vienes?",
+        "¡Contesta ya! 😱",
+      ];
+
+      function lanzarNotificacion() {
+        if (!gameStarted) return;
+
+        textoElement.innerText =
+          misMensajes[Math.floor(Math.random() * misMensajes.length)];
+
+        notifElement.classList.add("mostrar");
+
+        setTimeout(lanzarNotificacion, 8000 + Math.random() * 4000);
+      }
+
+      function cerrarMensaje() {
+        notifElement.classList.remove("mostrar");
+      }
+
+      function activarClimaAleatorio() {
+        if (climaActual !== null) return; // Si ya hay clima activo, no activar otro
+
+        const ahora = performance.now();
+        if (ahora - lastClimaTime < climaCooldown) return; // Esperar cooldown
+
+        if (Math.random() > climaProbability) return; // Probabilidad de activación
+
+        const tipoClima = Math.random() > 0.5 ? "frio" : "calor";
+        climaActual = tipoClima;
+        climaStartTime = ahora;
+        climaDuration =
+          climaDurationRange[0] +
+          Math.random() * (climaDurationRange[1] - climaDurationRange[0]);
+        lastClimaTime = ahora;
+
+        // Actualizar color del filtro
+        if (tipoClima === "frio") {
+          filtroClima.style.backgroundColor = "rgba(100, 150, 255, 0.6)";
+          avisoClima.innerText = "❄️ FRÍO - Pulsa ⬆️";
+        } else {
+          filtroClima.style.backgroundColor = "rgba(255, 100, 0, 0.7)"; // Naranja más intenso
+          avisoClima.innerText = "🔥 CALOR - Pulsa ⬇️";
+        }
+
+        filtroClima.style.opacity = "1";
+        avisoClima.style.opacity = "1";
+      }
+
+      function corregirClima(tipo) {
+        if (climaActual === tipo) {
+          climaActual = null;
+          filtroClima.style.opacity = "0";
+          avisoClima.style.opacity = "0";
+        }
+      }
 
       const car = {
         x: 80,
@@ -200,175 +489,339 @@
         image: new Image(),
         loaded: false,
       };
+
       car.image.src = "images/imagen_coche.png";
       car.image.onload = () => (car.loaded = true);
 
       const enemyImages = [];
-      const sources = [
-        "images/coche_de_cara1.png",
-        "images/coche_de_cara2.png",
-        "images/coche_de_cara3.png",
-      ];
-      sources.forEach((src) => {
+
+      ["1", "2", "3"].forEach((n) => {
         const img = new Image();
-        img.src = src;
+        img.src = `images/coche_de_cara${n}.png`;
         enemyImages.push(img);
       });
 
       let keys = {};
+      let lastKeyPressTime = {}; // Para almacenar el tiempo del último press de cada tecla
+      const movementDelay = 400; // 0.4 segundos en milisegundos
+
       window.addEventListener("keydown", (e) => {
         keys[e.key] = true;
-        if (e.key.toLowerCase() === "c") {
-          showControls = !showControls;
-          divControles.style.display = showControls ? "block" : "none";
-          // Ocultamos el aviso pequeño si los controles ya están abiertos
-          avisoC.style.opacity = showControls ? "0" : "1";
+
+        // Guardar timestamp cuando se presiona la tecla (para delay del frío)
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+          if (!lastKeyPressTime[e.key]) {
+            lastKeyPressTime[e.key] = performance.now();
+          }
         }
       });
-      window.addEventListener("keyup", (e) => (keys[e.key] = false));
+
+      window.addEventListener("keyup", (e) => {
+        keys[e.key] = false;
+        // Limpiar el timestamp cuando se suelta la tecla
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+          delete lastKeyPressTime[e.key];
+        }
+      });
+
+      // Event listeners para las zonas invisibles de flechas
+      zonaFlechaArriba.addEventListener("click", () => {
+        if (climaActual === "frio") {
+          corregirClima("frio");
+        }
+      });
+
+      zonaFlechaAbajo.addEventListener("click", () => {
+        if (climaActual === "calor") {
+          corregirClima("calor");
+        }
+      });
 
       function setupWorld() {
         canvas.width = GAME_WIDTH;
         canvas.height = GAME_HEIGHT;
+
         lanes = [
           roadY + roadHeight * 0.25 - PLAYER_HEIGHT / 2,
           roadY + roadHeight * 0.75 - PLAYER_HEIGHT / 2,
         ];
+
         car.y = lanes[0];
         car.targetY = lanes[0];
-        clouds = [];
-        for (let i = 0; i < 5; i++) {
-          clouds.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * (roadY - 80),
-            size: 25,
-            speed: 0.5,
-          });
-        }
       }
-      setupWorld();
 
-      function spawnEnemy() {
-        let laneToSpawn = Math.floor(Math.random() * lanes.length);
-        const imgIndex = Math.floor(Math.random() * enemyImages.length);
-        enemyCars.push({
-          width: 180,
-          height: 100,
-          x: canvas.width + 200,
-          y: lanes[laneToSpawn],
-          speed: 2,
-          image: enemyImages[imgIndex],
-        });
-      }
+      setupWorld();
 
       function iniciarPartida() {
         enemyCars = [];
-        lastSpawnTime = 0;
-        currentSpeed = minSpeed;
-        car.y = lanes[0];
-        car.targetY = lanes[0];
-        invencibleHasta = performance.now() + 2000;
+
+        currentSpeed = 5;
+
+        sleepMeter = 0;
+        sleepWarningShown = false;
+        isResting = false;
+        restStart = 0;
+        lastTimestamp = 0;
+        puntos = 0; // Resetear puntos
+        ultimaActualizacionPuntos = 0;
+        contadorPuntos.innerText = "Puntos: 0";
+
+        // Reset del clima
+        climaActual = null;
+        climaStartTime = 0;
+        lastClimaTime = 0;
+        filtroClima.style.opacity = "0";
+        avisoClima.style.opacity = "0";
+
+        barraSuenoFill.style.width = "0%";
+        avisoSueno.style.opacity = 0;
+
+        filtroSueño.style.opacity = 0;
+
         gameStarted = true;
+
         startScreen.style.display = "none";
+
+        cerrarMensaje();
+
+        setTimeout(lanzarNotificacion, 4000);
       }
 
-      btnIniciarVerde.addEventListener("click", iniciarPartida);
+      btnIniciarVerde.onclick = iniciarPartida;
 
-      btnResetImg.addEventListener("click", () => {
+      btnResetImg.onclick = () => {
         btnResetImg.style.display = "none";
         btnIniciarVerde.style.display = "block";
-        mensajeEstado.innerText = "JUEGO DE COCHE";
+
         iniciarPartida();
-      });
+      };
 
       function update(timestamp) {
         if (!gameStarted) return;
 
-        if (keys["ArrowRight"]) currentSpeed += 0.03;
-        else if (keys["ArrowLeft"]) currentSpeed -= 0.08;
-        else if (currentSpeed > minSpeed) currentSpeed -= 0.01;
+        const delta = lastTimestamp ? timestamp - lastTimestamp : 0;
+        lastTimestamp = timestamp;
 
-        currentSpeed = Math.max(minSpeed, Math.min(currentSpeed, maxSpeed));
+        // Intentar activar clima aleatorio
+        activarClimaAleatorio();
+
+        // El clima se mantiene activo hasta que el usuario lo corrija
+        // No se desactiva automáticamente
+
+        // Cambiar carril
+        // Sin frío: funciona normal
+        // Con frío: un toque, espera 0.4s, luego se mueve mientras mantengas la flecha
+
+        if (keys["ArrowUp"]) {
+          if (climaActual === "frio") {
+            // Con frío, hay delay de 0.4s
+            if (lastKeyPressTime["ArrowUp"]) {
+              const timeSincePress = timestamp - lastKeyPressTime["ArrowUp"];
+              if (timeSincePress >= movementDelay) {
+                car.targetY = lanes[0];
+              }
+            }
+          } else {
+            // Sin frío, funciona normal
+            car.targetY = lanes[0];
+          }
+        }
+
+        if (keys["ArrowDown"]) {
+          if (climaActual === "frio") {
+            // Con frío, hay delay de 0.4s
+            if (lastKeyPressTime["ArrowDown"]) {
+              const timeSincePress = timestamp - lastKeyPressTime["ArrowDown"];
+              if (timeSincePress >= movementDelay) {
+                car.targetY = lanes[1];
+              }
+            }
+          } else {
+            // Sin frío, funciona normal
+            car.targetY = lanes[1];
+          }
+        }
+
+        // Controles de velocidad
+        let speedMultiplier = 1;
+
+        // Si hay frío, ralentizar
+        if (climaActual === "frio") {
+          speedMultiplier = 0.5; // Ralentizar al 50%
+        }
+        // Si hay calor, acelerar
+        else if (climaActual === "calor") {
+          speedMultiplier = 1.5; // Acelerar al 150%
+        }
+
+        if (keys["ArrowRight"])
+          currentSpeed = Math.min(
+            currentSpeed + 0.03 * speedMultiplier,
+            maxSpeed,
+          );
+        else if (keys["ArrowLeft"])
+          currentSpeed = Math.max(currentSpeed - 0.08 * speedMultiplier, 5);
+
         velocimetro.innerText = Math.floor(currentSpeed * 12) + " km/h";
 
-        lineOffset -= currentSpeed * 2;
-        if (lineOffset <= -100) lineOffset = 0;
+        // Actualizar puntos cada segundo
+        if (timestamp - ultimaActualizacionPuntos >= 1000 && !isResting) {
+          puntos += 10;
+          ultimaActualizacionPuntos = timestamp;
+          contadorPuntos.innerText = `Puntos: ${puntos}`;
+        }
 
-        clouds.forEach((c) => {
-          c.x -= c.speed * (currentSpeed / 4);
-          if (c.x < -100) c.x = canvas.width + 100;
-        });
+        if (isResting) {
+          const elapsed = timestamp - restStart;
+          if (elapsed >= restDuration) {
+            isResting = false;
+            pantallaDescanso.classList.remove("visible");
+            sleepMeter = 0;
+            sleepWarningShown = false;
+            avisoSueno.style.opacity = 0;
+            currentSpeed = 5;
+            enemyCars = []; // Limpiar todos los coches enemigos activos
+          }
+          // Durante el descanso no actualizamos el mundo
+          return;
+        }
 
-        if (keys["ArrowUp"]) car.targetY = lanes[0];
-        if (keys["ArrowDown"]) car.targetY = lanes[1];
+        lineOffset = (lineOffset - currentSpeed * 2) % 100;
+
+        // Efecto de shake para altas velocidades
+        let shakeIntensity = 0;
+        const minShakeSpeed = 120 / 12; // 10
+        const maxShakeSpeed = 140 / 12; // ~11.666
+        if (currentSpeed > minShakeSpeed && currentSpeed <= maxShakeSpeed) {
+          shakeIntensity =
+            (currentSpeed - minShakeSpeed) / (maxShakeSpeed - minShakeSpeed);
+        }
+        if (shakeIntensity > 0) {
+          let multiplier = 15; // base 15, max 7.5px
+          if (currentSpeed > 130 / 12) {
+            // >10.833
+            multiplier = 25; // más fuerte, max 12.5px
+          }
+          const shakeX = (Math.random() - 0.5) * shakeIntensity * multiplier;
+          const shakeY = (Math.random() - 0.5) * shakeIntensity * multiplier;
+          gameContainer.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
+        } else if (
+          climaActual === "calor" &&
+          climaDuration > 0 &&
+          climaStartTime > 0
+        ) {
+          // Efecto de mareo progresivo para calor
+          const elapsedClima = timestamp - climaStartTime;
+          const progress = Math.min(elapsedClima / climaDuration, 1); // 0 a 1
+          const intensity = progress * 50; // Máximo 50px de movimiento (muy fuerte)
+          const frequency = 0.008; // Velocidad del balanceo más rápida
+          const balanceoX = Math.sin(timestamp * frequency) * intensity;
+          const balanceoY =
+            Math.cos(timestamp * frequency * 1.3) * intensity * 0.7; // Más movimiento vertical
+          gameContainer.style.transform = `translate(${balanceoX}px, ${balanceoY}px)`;
+        } else {
+          gameContainer.style.transform = "";
+        }
+
+        // Barra de sueño: sube lentamente con el tiempo
+        sleepMeter = Math.min(1, sleepMeter + delta / 40000);
+        barraSuenoFill.style.width = `${sleepMeter * 100}%`;
+
+        const warningThreshold = 0.85;
+        const darkThreshold = 0.7;
+        const maxThreshold = 1.0;
+
+        // Oscurecer pantalla progresivamente a partir del 70%
+        if (sleepMeter >= darkThreshold && !isResting) {
+          const darkProgress =
+            (sleepMeter - darkThreshold) / (1 - darkThreshold); // 0 a 1
+          const darkOpacity = Math.min(darkProgress * 0.6, 0.6); // Máximo 60% oscuridad
+          filtroSueño.style.opacity = darkOpacity;
+        } else if (!isResting) {
+          filtroSueño.style.opacity = 0;
+        }
+
+        // Parpadeo cuando la barra está al máximo
+        if (sleepMeter >= maxThreshold && !isResting) {
+          const blinkFrequency = 0.01; // Velocidad del parpadeo
+          const blinkIntensity =
+            Math.sin(timestamp * blinkFrequency * 0.15) > 0.5 ? 1 : 0.3;
+          filtroSueño.style.opacity = blinkIntensity;
+        }
+
+        if (sleepMeter >= warningThreshold) {
+          avisoSueno.style.opacity = 1;
+          barraSuenoFill.style.background =
+            "linear-gradient(90deg, #c0392b, #e74c3c)";
+          if (keys[" "] && !isResting) {
+            isResting = true;
+            restStart = timestamp;
+            pantallaDescanso.classList.add("visible");
+            currentSpeed = 0;
+            gameContainer.style.transform = "";
+            filtroSueño.style.opacity = 0; // Limpiar filtro al descansar
+          }
+        } else {
+          avisoSueno.style.opacity = 0;
+          barraSuenoFill.style.background =
+            "linear-gradient(90deg, #8e44ad, #9b59b6)";
+        }
 
         const diff = car.targetY - car.y;
-        if (Math.abs(diff) > car.speed) car.y += Math.sign(diff) * car.speed;
-        else car.y = car.targetY;
+
+        car.y +=
+          Math.abs(diff) > car.speed ? Math.sign(diff) * car.speed : diff;
 
         for (let i = enemyCars.length - 1; i >= 0; i--) {
           let e = enemyCars[i];
+
           e.x -= e.speed + currentSpeed;
 
-          if (timestamp > invencibleHasta) {
-            if (
-              car.x + 45 < e.x + e.width - 45 &&
-              car.x + PLAYER_WIDTH - 45 > e.x + 45 &&
-              car.y + 30 < e.y + e.height - 30 &&
-              car.y + PLAYER_HEIGHT - 30 > e.y + 30
-            ) {
-              gameStarted = false;
-              mensajeEstado.innerText = "¡HAS CHOCADO!";
-              btnIniciarVerde.style.display = "none";
-              btnResetImg.style.display = "block";
-              startScreen.style.display = "flex";
-              return;
-            }
+          if (
+            car.x < e.x + e.width - 45 &&
+            car.x + PLAYER_WIDTH - 45 > e.x + 45 &&
+            car.y < e.y + e.height - 25 &&
+            car.y + PLAYER_HEIGHT > e.y + 25
+          ) {
+            gameStarted = false;
+
+            mensajeEstado.innerText = `¡TE HAS CHOCADO!\nPuntuación: ${puntos}`;
+
+            btnResetImg.style.display = "block";
+            btnIniciarVerde.style.display = "none";
+
+            startScreen.style.display = "flex";
+
+            filtroSueño.style.opacity = 0;
           }
-          if (e.x < -300) enemyCars.splice(i, 1);
+
+          if (e.x < -200) enemyCars.splice(i, 1);
         }
       }
 
-      function draw(timestamp) {
+      function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         ctx.fillStyle = "#87CEEB";
         ctx.fillRect(0, 0, canvas.width, roadY);
-        ctx.fillStyle = "#FFD700";
-        ctx.beginPath();
-        ctx.arc(canvas.width - 60, 50, 30, 0, Math.PI * 2);
-        ctx.fill();
-
-        clouds.forEach((c) => {
-          ctx.fillStyle = "white";
-          ctx.beginPath();
-          ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
-          ctx.fill();
-        });
 
         ctx.fillStyle = "#2c3e50";
         ctx.fillRect(0, roadY, canvas.width, roadHeight);
-        ctx.fillStyle = "#ecf0f1";
-        ctx.fillRect(0, roadY, canvas.width, 6);
-        ctx.fillRect(0, roadY + roadHeight - 6, canvas.width, 6);
+
         ctx.strokeStyle = "#f1c40f";
-        ctx.lineWidth = 6;
+
         ctx.setLineDash([60, 40]);
         ctx.lineDashOffset = -lineOffset;
+
         ctx.beginPath();
         ctx.moveTo(0, roadY + roadHeight / 2);
         ctx.lineTo(canvas.width, roadY + roadHeight / 2);
         ctx.stroke();
+
         ctx.setLineDash([]);
 
-        ctx.save();
-        if (
-          timestamp < invencibleHasta &&
-          Math.floor(timestamp / 100) % 2 === 0
-        )
-          ctx.globalAlpha = 0.4;
         if (car.loaded)
           ctx.drawImage(car.image, car.x, car.y, PLAYER_WIDTH, PLAYER_HEIGHT);
-        ctx.restore();
 
         enemyCars.forEach((e) => {
           if (e.image.complete)
@@ -378,17 +831,27 @@
 
       function gameLoop(timestamp) {
         update(timestamp);
-        draw(timestamp);
-        if (gameStarted) {
-          if (!lastSpawnTime) lastSpawnTime = timestamp;
-          let spawnRate = 1300 - currentSpeed * 30;
-          if (timestamp - lastSpawnTime > Math.max(550, spawnRate)) {
-            spawnEnemy();
+
+        draw();
+
+        if (gameStarted && !isResting) {
+          if (timestamp - lastSpawnTime > 1500) {
+            enemyCars.push({
+              x: 1100,
+              y: lanes[Math.floor(Math.random() * 2)],
+              width: 180,
+              height: 100,
+              speed: 2,
+              image: enemyImages[Math.floor(Math.random() * 3)],
+            });
+
             lastSpawnTime = timestamp;
           }
         }
+
         requestAnimationFrame(gameLoop);
       }
+
       requestAnimationFrame(gameLoop);
     </script>
   </body>

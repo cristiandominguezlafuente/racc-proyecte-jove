@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: black;
+        font-family: "Press Start 2P", cursive;
+        color: white;
+        margin: 0;
+        padding: 20px;
+        overflow-x: hidden;
+      }
+      h1 {
+        color: #ffd829;
+        margin: 1.2rem 0;
+        opacity: 0;
+        padding: 100px;
+        transform: translateY(120vh);
+      }
+      .slide-up {
+        position: relative;
+      }
+      .slide-up h1 {
+        animation: riseFromBottom 2s ease-out forwards;
+      }
+      .slide-up h1:nth-child(1) {
+        animation-duration: 2s;
+        animation-delay: 0.3s;
+      }
+      .slide-up h1:nth-child(2) {
+        animation-duration: 2.8s;
+        animation-delay: 1.2s;
+      }
+      .slide-up h1:nth-child(3) {
+        animation-duration: 3.4s;
+        animation-delay: 2.2s;
+      }
+      @keyframes riseFromBottom {
+        0% {
+          transform: translateY(120vh);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-up">
+      <h1>Tienes 19 años recién cumplidos, es verano de 2026</h1>
+      <h1>Has decidido emprender un viaje en coche por Europa</h1>
+      <h1>
+        Heredaste el viejo coche de tu madre, tiene varios fallos, por lo tanto
+        tendras que ir atento...
+      </h1>
+    </div>
+    <script>
+      setTimeout(function () {
+        window.location.href = "tuto.html";
+      }, 10000);
+    </script>
+  </body>
+</html>
