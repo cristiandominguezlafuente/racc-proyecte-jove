@@ -133,26 +133,36 @@ nav img {
 .section-explicacion {
   background-color: #fff5ca;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 60px 25px;
-  gap: 150px;
+  gap: 30px;
 
   opacity: 0;
   transform: translateY(40px);
   animation: aparecer 0.8s ease forwards;
 }
 
-.section-explicacion:nth-child(odd) {
+#planificacio.section-explicacion {
   flex-direction: row;
-  animation-delay: 0.6s;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 150px;
+}
+
+#planificacio .section-texto,
+#planificacio .section-imagenes {
+  order: initial;
+  width: 500px;
+}
+
+.section-explicacion:not(#planificacio) {
+  flex-direction: column;
 }
 
 .section-explicacion:nth-child(even) {
-  flex-direction: row-reverse;
   background-color: #f9f9f9;
-  animation-delay: 1s;
 }
-
 .section-explicacion:nth-child(3) {
   animation-delay: 1.4s;
 }
@@ -186,8 +196,28 @@ nav img {
   margin-bottom: 15px;
 }
 
-.section-imagenes {
-  width: 500px;
+.section-texto {
+  width: 100%;
+  max-width: 700px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.section-explicacion:not(#planificacio) .section-imagenes {
+  width: 100%;
+  max-width: 900px;
+  order: 2;
+}
+
+.section-explicacion:not(#planificacio) .section-texto {
+  order: 1;
+}
+
+#planificacio .section-imagenes,
+#planificacio .section-texto {
+  order: initial;
 }
 
 /* =========================
@@ -195,8 +225,10 @@ nav img {
 ========================= */
 
 .grid-fotos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
   gap: 15px;
 
   opacity: 0;
@@ -206,12 +238,21 @@ nav img {
 }
 
 .grid-fotos img {
-  width: 100%;
+  width: calc(50% - 7.5px);
+  max-width: 500px;
   height: auto;
-  max-height: 250px;
   object-fit: cover;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.grid-fotos img:only-child {
+  width: 100%;
+  max-width: 900px;
+}
+
+.grid-fotos.two-photos {
+  justify-content: space-between;
 }
 
 .grid-fotos img:only-child {
