@@ -1,67 +1,154 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      body {
-        margin: 0;
-        height: 100vh; /* Ocupa toda la ventana */
-        display: flex;
-        justify-content: center; /* Centra horizontalmente */
-        align-items: center; /* Centra verticalmente */
-        background-color: black;
-        position: relative;
-        
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tutorial</title>
 
-      .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 1000px;
-        height: 600px;
-        background-image:url(/racc-proyecte-jove/images/fondo_tuto.jpg);
-        background-size: cover;
-        background-position: center;
-        
-      }
-      .chico{
-        height: 100px;
-        width: 100px;
-        position: absolute;
-        left: 450px;
-        top: 350px;
-        
-      }
-      .chico img{
-        height: 400px;
-        width: 300px;
+  <!-- ✅ TIPOGRAFÍA ROBOTO -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 
-      }
-      .madre{
-        height: 100px;
-        width: 100px;
-        position: absolute;
-        transform: scaleX(-1);
-        left: 1390px;
-        top: 366px;
-      }
-      .madre img{
-        height: 400px;
-        width: 300px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="chico">
-        <img src="/racc-proyecte-jove/images/zagal.png" alt="">
-      </div>
-      <div class="madre">
-        <img src="/racc-proyecte-jove/images/madre.png" alt="">
-      </div>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: black;
+      position: relative;
+
+      /* ✅ APLICAR TIPOGRAFÍA */
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 1000px;
+      height: 600px;
+      background-image: url(/racc-proyecte-jove/images/fondo_tuto.jpg);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .chico {
+      position: absolute;
+      left: -20px;
+      top: 205px;
+    }
+
+    .chico img {
+      height: 400px;
+      width: 300px;
+    }
+
+    .madre {
+      position: absolute;
+      transform: scaleX(-1);
+      left: 720px;
+      top: 209px;
+    }
+
+    .madre img {
+      height: 400px;
+      width: 300px;
+    }
+
+    /* TUTORIAL */
+    .tutorial {
+      position: absolute;
+      top: 20px;
+      width: 90%;
+      max-width: 900px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .tutorial p {
+      margin-bottom: 15px;
+      font-size: 18px;
+
+      /* ✅ MEJOR LECTURA */
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    .tutorial button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #00aaff;
+      color: white;
+    }
+
+    .tutorial button:hover {
+      background-color: #0088cc;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="tutorial">
+      <p id="textoTutorial">Lorem ipsum dolor sit amet...</p>
+      <button id="btnSiguiente">Següent</button>
     </div>
-  </body>
+
+    <div class="chico">
+      <img src="/racc-proyecte-jove/images/zagal.png" alt="">
+    </div>
+
+    <div class="madre">
+      <img src="/racc-proyecte-jove/images/madre.png" alt="">
+    </div>
+
+  </div>
+
+  <script>
+    const textos = [
+      "Bon dia, fill! Et trucava simplement per recordar-te un parell de coses del cotxe.",
+      "Pensa que està una mica... antic, així que hauràs d’estar atent a algunes coses.",
+      "Intenta posar el mòbil en silenci per no veure les notificacions; per això hauràs d’anar tancant-ne algunes.",
+      "També tingues en compte que l’aire condicionat està espatllat, així que hauràs d’anar canviant la temperatura amb les fletxes inferiors (⬆️ y ⬇️) dins del cotxe. Si no el regules, et pots despistar molt fàcilment, t’ho dic per experiència...",
+      "Recorda moderar la velocitat! No vagis ni massa ràpid ni massa lent!",
+      "Tingues en compte que et cansaràs conduint, així que hauràs de prémer la tecla espai per parar a dormir. NO T’ADORMIS CONDUINT! Recorda que la somnolència afecta molt abans d’adormir-te; hauries de saber-ho ja que t’has tret el carnet fa poc.",
+      "Per cert, recorda portar-me algun record.",
+      "Estigues preparat! Estàs a punt de començar el teu viatge! Ves amb compte..."
+    ];
+
+    let indice = 0;
+
+    const texto = document.getElementById("textoTutorial");
+    const boton = document.getElementById("btnSiguiente");
+
+    texto.textContent = textos[indice];
+
+    boton.addEventListener("click", () => {
+      indice++;
+
+      if (indice < textos.length - 1) {
+        texto.textContent = textos[indice];
+      }
+      else if (indice === textos.length - 1) {
+        texto.textContent = textos[indice];
+        boton.textContent = "Comenzar juego";
+      }
+      else {
+        window.location.href = "juego.html";
+      }
+    });
+  </script>
+
+</body>
 </html>

@@ -353,16 +353,16 @@
 
       <div id="velocimetroFijo">0 km/h</div>
 
-      <div id="contador-puntos">Puntos: 0</div>
+      <div id="contador-puntos">Punts: 0</div>
 
       <div id="barra-sueño-container">
         <div id="barra-sueño-fill"></div>
-        <div id="barra-sueño-label">Barra de cansancio</div>
+        <div id="barra-sueño-label">Barra de son</div>
       </div>
-      <div id="aviso-sueño">Que sueño… deberías parar (pulsa ESPACIO)</div>
+      <div id="aviso-sueño">Quina son… hauria de parar... (prem ESPAI)</div>
 
       <div id="aviso-controles">
-        Pulsa <span class="tecla">C</span> para ver los controles
+        Pulsa <span class="tecla">C</span> per veure els controls
       </div>
 
       <div id="pantalla-descanso">
@@ -380,7 +380,7 @@
 
         <img src="images/boton_reiniciar.png" id="botonReiniciarImg" />
 
-        <button id="btnIniciarVerde">INICIAR</button>
+        <button id="btnIniciarVerde">COMENÇAR</button>
       </div>
 
       <canvas id="gameCanvas"></canvas>
@@ -454,10 +454,10 @@
       const climaProbability = 0.3; // 30% de probabilidad de que se active clima
 
       const misMensajes = [
-        "¿Dónde estás? 📍",
-        "¡Mira esto! 😂",
-        "Mama: ¿Vienes?",
-        "¡Contesta ya! 😱",
+        "Iaia: On ets? 📍",
+        "Cristian: Mira això! 😂",
+        "Mama: Véns?",
+        "Dani: M’envies el treball? 😱",
       ];
 
       function lanzarNotificacion() {
@@ -494,10 +494,10 @@
         // Actualizar color del filtro
         if (tipoClima === "frio") {
           filtroClima.style.backgroundColor = "rgba(100, 150, 255, 0.6)";
-          avisoClima.innerText = "❄️ FRÍO - Pulsa ⬆️";
+          avisoClima.innerText = "❄️ FRED - Prem ⬆️";
         } else {
           filtroClima.style.backgroundColor = "rgba(255, 100, 0, 0.7)"; // Naranja más intenso
-          avisoClima.innerText = "🔥 CALOR - Pulsa ⬇️";
+          avisoClima.innerText = "🔥 CALOR - Prem ⬇️";
         }
 
         filtroClima.style.opacity = "1";
@@ -544,10 +544,10 @@
           const avisoControles = document.getElementById("aviso-controles");
           if (controlesVisibles) {
             avisoControles.innerHTML =
-              "Controles:<br>⬅️ Frenar | ➡️ Acelerar<br>⬆️⬇️ Cambiar carril<br>Interior coche: ⬆️⬇️ Temperatura";
+              "Controls:<br>⬅️ Frenar | ➡️ Accelerar<br>⬆️⬇️ Canviar carril<br>Interior cotxe: ⬆️⬇️ Temperatura";
           } else {
             avisoControles.innerHTML =
-              'Pulsa <span class="tecla">C</span> para ver los controles';
+              'Pulsa <span class="tecla">C</span> para veure els controls';
           }
         }
 
@@ -607,7 +607,7 @@
         lastTimestamp = 0;
         puntos = 0; // Resetear puntos
         ultimaActualizacionPuntos = 0;
-        contadorPuntos.innerText = "Puntos: 0";
+        contadorPuntos.innerText = "Punts: 0";
 
         // Reset del clima
         climaActual = null;
@@ -711,7 +711,7 @@
         if (timestamp - ultimaActualizacionPuntos >= 1000 && !isResting) {
           puntos += 10;
           ultimaActualizacionPuntos = timestamp;
-          contadorPuntos.innerText = `Puntos: ${puntos}`;
+          contadorPuntos.innerText = `Punts: ${puntos}`;
         }
 
         if (isResting) {
@@ -828,7 +828,7 @@
           ) {
             gameStarted = false;
 
-            mensajeEstado.innerText = `¡TE HAS CHOCADO!\nPuntuación: ${puntos}`;
+            mensajeEstado.innerText = `T'HAS XOCAT!\nPuntuación: ${puntos}`;
 
             btnResetImg.style.display = "block";
             btnIniciarVerde.style.display = "none";
