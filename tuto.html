@@ -11,7 +11,9 @@
         display: flex;
         justify-content: center; /* Centra horizontalmente */
         align-items: center; /* Centra verticalmente */
-        background-color: gray; /* Opcional: color de fondo de la página */
+        background-color: black;
+        position: relative;
+        
       }
 
       .container {
@@ -20,14 +22,46 @@
         align-items: center;
         width: 1000px;
         height: 600px;
-        background-image:url(/images/fondo_tuto.jpg);
+        background-image:url(/racc-proyecte-jove/images/fondo_tuto.jpg);
         background-size: cover;
         background-position: center;
+        
+      }
+      .chico{
+        height: 100px;
+        width: 100px;
+        position: absolute;
+        left: 450px;
+        top: 350px;
+        
+      }
+      .chico img{
+        height: 400px;
+        width: 300px;
+
+      }
+      .madre{
+        height: 100px;
+        width: 100px;
+        position: absolute;
+        transform: scaleX(-1);
+        left: 1390px;
+        top: 366px;
+      }
+      .madre img{
+        height: 400px;
+        width: 300px;
       }
     </style>
   </head>
   <body>
     <div class="container">
+      <div class="chico">
+        <img src="/racc-proyecte-jove/images/zagal.png" alt="">
+      </div>
+      <div class="madre">
+        <img src="/racc-proyecte-jove/images/madre.png" alt="">
+      </div>
     </div>
   </body>
 </html>
